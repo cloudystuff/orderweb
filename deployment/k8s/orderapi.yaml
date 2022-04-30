@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderapi
+spec:
+  selector:
+    matchLabels:
+      app: daprdemo
+      tier: orderapi
+  template:
+    metadata:
+      labels:
+        app: daprdemo
+        tier: orderapi
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "orderapi"
+        dapr.io/app-port: "80"                   
+        dapr.io/config: "zipkin"
+    spec:
+      containers:
+      - name: orderapi
+        image: jakob.azurecr.io/orderapi:2.0.27
+        ports:
+        - containerPort: 80
+        env:
+        - name: DAPR_HTTP_PORT
+          value: "3500"        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orderapi
+  labels:
+    app: daprdemo
+spec:
+  selector:
+    app: daprdemo
+    tier: orderapi
+  ports:
+    - protocol: TCP
+      port: 80
+  type: ClusterIP
+

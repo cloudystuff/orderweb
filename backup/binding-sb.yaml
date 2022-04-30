@@ -1,0 +1,16 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: order
+spec:
+  type: bindings.azure.servicebusqueues
+  version: v1
+  metadata:
+  - name: connectionString
+    value: "Endpoint=sb://daprbus-demo.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=oNuA05NJ5aXGU4xMEMWc56/gUByMUvJKbCOOM2f0EPs="
+  - name: queueName
+    value: daprqueue
+  - name: ttlInSeconds
+    value: 60
+scopes:
+- orderapi

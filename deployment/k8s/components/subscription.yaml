@@ -1,0 +1,10 @@
+apiVersion: dapr.io/v1alpha1
+kind: Subscription
+metadata:
+  name: ordercreated
+spec:
+  topic: ordercreated
+  route: /ordercreated
+  pubsubname: orderpubsub
+scopes:
+- orderprocessor

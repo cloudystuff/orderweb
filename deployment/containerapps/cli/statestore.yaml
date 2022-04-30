@@ -1,0 +1,20 @@
+# components.yaml for Azure Blob storage component
+- name: statestore
+  type: state.azure.cosmosdb
+  version: v1
+  metadata:
+  - name: url
+    value: https://daprstate.documents.azure.com:443/
+  - name: masterKey
+    value: fIVJ8fN74uG4gKRdw7lzxYBEio9WUer7IX9Z4MFOewrEXIzNvfwf9vm4D6A0ir1q4yGmFuBCUGjdHPFEhJwyPg==
+  - name: database
+    value: daprdemo
+  - name: collection
+    value: orders
+
+- name: orderpubsub
+  type: pubsub.azure.servicebus
+  version: v1
+  metadata:
+  - name: connectionString # Required
+    value: "Endpoint=sb://daprbus-demo.servicebus.windows.net/;SharedAccessKeyName=containerapp;SharedAccessKey=N/n1/EdY8QQ6cTvRsR+AxCTDOReobuHsAkOfXGikCr0=;EntityPath=orders"
