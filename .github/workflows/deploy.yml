@@ -27,9 +27,7 @@ jobs:
       
     - name: List of the GitHub Actions environment variables on Windows
       run: echo "${GITHUB_RUN_ID}"
-      
-    - name: List of the GitHub Actions environment variables on Windows
-      run: echo "${{GITHUB_RUN_ID}}"      
+ 
     
     - name: Build the Docker image
       run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$GITHUB_RUN_ID"
