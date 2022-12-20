@@ -30,4 +30,4 @@ jobs:
         login-server: jakob.azurecr.io
         
     - name: Push image
-      run: docker push jakob.azurecr.io/orderweb:${{ GITHUB_RUN_ID }} 
+      run: docker push jakob.azurecr.io/orderweb:$GITHUB_RUN_ID
