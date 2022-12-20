@@ -1,0 +1,32 @@
+name: orderweb
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build the Docker image
+      run: docker build . --file orderweb/Dockerfile --tag jakob.azurecr.io/orderweb:$(date +%s)
+      
+    - name: Azure Container Registry Login
+      uses: Azure/docker-login@v1
+      with:
+        # Container registry username
+        username: jakob
+        # Container registry password
+        password: ${{ secrets.ACR_PASSWORD }}
+        # Container registry server url
+        login-server: jakob.azurecr.io
+        
+    - name: Push image
+      run: docker push jakob.azurecr.io/orderweb:$(date +%s)        
