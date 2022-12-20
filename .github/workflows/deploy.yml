@@ -16,21 +16,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: List of the GitHub Actions environment variables on Windows
-      run: env
-      
-    - name: List of the GitHub Actions environment variables on Windows
-      run: echo "$GITHUB_RUN_ID"
-      
-    - name: List of the GitHub Actions environment variables on Windows
-      run: echo "$(GITHUB_RUN_ID)"      
-      
-    - name: List of the GitHub Actions environment variables on Windows
-      run: echo "${GITHUB_RUN_ID}"
- 
-    
     - name: Build the Docker image
-      run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$(GITHUB_RUN_ID)"
+      run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$(GITHUB_RUN_NUMBER)"
       
     - name: Azure Container Registry Login
       uses: Azure/docker-login@v1
@@ -43,4 +30,4 @@ jobs:
         login-server: jakob.azurecr.io
         
     - name: Push image
-      run: docker push "jakob.azurecr.io/orderweb:$(GITHUB_RUN_ID)"
+      run: docker push "jakob.azurecr.io/orderweb:$(GITHUB_RUN_NUMBER)"
