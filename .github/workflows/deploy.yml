@@ -16,6 +16,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    - name: List of the GitHub Actions environment variables on Windows
+      run: env    
+    
     - name: Build the Docker image
       run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$GITHUB_RUN_ID"
       
