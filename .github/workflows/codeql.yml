@@ -1,4 +1,5 @@
 name: "CodeQL"
+run-name: "CodeQL ${{GITHUB_RUN_NUMBER}}"
 
 on:
   pull_request:
