@@ -1,5 +1,5 @@
 name: "CodeQL"
-run-name: "CodeQL $GITHUB_RUN_NUMBER"
+run-name: "CodeQL ${{ github.run_number }}"
 
 on:
   pull_request:
