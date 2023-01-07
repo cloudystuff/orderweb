@@ -7,10 +7,10 @@ spec:
   version: v1
   metadata:
   - name: toNumber # required.
-    value: +46707995669
+    value: REPLACE
   - name: fromNumber # required.
-    value: +12075013259
+    value: REPLACE
   - name: accountSid # required.
-    value: AC923b7b63dff80836240e884b526ee56f
+    value: REPLACE
   - name: authToken # required.
-    value: 22d554755fab741046ff60d1725c95af
+    value: REPLACE

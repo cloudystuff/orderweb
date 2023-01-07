@@ -6,9 +6,9 @@ spec:
   type: state.azure.cosmosdb
   metadata:
   - name: url
-    value: https://daprstate.documents.azure.com:443/
+    value: REPLACE
   - name: masterKey
-    value: h8PNFT7S8DeM2vKJZXaIc6oUwMRh6c1tnLXWk6u4wMxvrgkPwIyyq5OY5oliua9ITUPRPnpWBOgd5Y2wZNhb5A==
+    value: REPLACE
   - name: database
     value: daprdemo
   - name: collection

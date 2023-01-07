@@ -9,7 +9,7 @@ spec:
   - name: url
     value: https://daprstate.documents.azure.com:443/
   - name: masterKey
-    value: fIVJ8fN74uG4gKRdw7lzxYBEio9WUer7IX9Z4MFOewrEXIzNvfwf9vm4D6A0ir1q4yGmFuBCUGjdHPFEhJwyPg==
+    value: REPLACE
   - name: database
     value: daprdemo
   - name: collection
