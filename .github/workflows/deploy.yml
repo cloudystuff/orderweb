@@ -63,14 +63,8 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true 
         
-    - name: Azure PowerShell Action
-      uses: Azure/powershell@v1
-      with:
-        inlineScript: |
-          "XXXXX"
-          
-        failOnStandardError: true
-        azPSVersion: latest
-
+    - name: Deploy bicep
+      run: ./deployment/containerapps/cli/deploy.ps1 -resourceGroup $resourceGroup -location $location -logAnalyticsWorkspace $logAnalyticsWorkspace -environment $containerAppEnvironment -version 29"
+      shell: pwsh
 
 
