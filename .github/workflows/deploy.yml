@@ -64,10 +64,10 @@ jobs:
     - name: Azure PowerShell Action
       uses: Azure/powershell@v1
       with:
-        # Specify the Az PowerShell script here.
         inlineScript: |
-          Write-Host -Verbose "$($env:GITHUB_WORKSPACE)/deployment/containerapps/cli/deploy.ps1 -resourceGroup $($env:resourceGroup) -location $($env:location) -logAnalyticsWorkspace $($env:logAnalyticsWorkspace) -environment $($env:containerAppEnvironment) -version $($env:GITHUB_RUN_NUMBER)"
-          $env:GITHUB_WORKSPACE/deployment/containerapps/cli/deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -version $env:GITHUB_RUN_NUMBER
+          Write-Verbose "XXXXX"
+          Write-Verbose -Verbose "$($env:GITHUB_WORKSPACE)/deployment/containerapps/cli/deploy.ps1 -resourceGroup $($env:resourceGroup) -location $($env:location) -logAnalyticsWorkspace $($env:logAnalyticsWorkspace) -environment $($env:containerAppEnvironment) -version $($env:GITHUB_RUN_NUMBER)"
+          #$env:GITHUB_WORKSPACE/deployment/containerapps/cli/deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -version $env:GITHUB_RUN_NUMBER
           
         failOnStandardError: true
         azPSVersion: latest
