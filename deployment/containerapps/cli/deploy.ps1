@@ -3,6 +3,8 @@ $LOCATION="eastus"
 $LOG_ANALYTICS_WORKSPACE="containerapps-logs"
 $CONTAINERAPPS_ENVIRONMENT="containerapp-env"
 
+az config set extension.use_dynamic_install=yes_without_prompt
+
 # Create resource group
 az group create `
   --name $RESOURCE_GROUP `

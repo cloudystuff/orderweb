@@ -62,7 +62,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true 
-        
+      
     - name: Deploy bicep
       run: ./deployment/containerapps/cli/deploy.ps1 -resourceGroup $resourceGroup -location $location -logAnalyticsWorkspace $logAnalyticsWorkspace -environment $containerAppEnvironment -version 29
       shell: pwsh
