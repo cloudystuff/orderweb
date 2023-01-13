@@ -55,6 +55,8 @@ jobs:
       logAnalyticsWorkspace: containerapps-logs
       containerAppEnvironment: containerapp      
     steps:
+    - uses: actions/checkout@v3
+    
     - name: Azure login
       uses: azure/login@v1
       with:
@@ -65,9 +67,9 @@ jobs:
       uses: Azure/powershell@v1
       with:
         inlineScript: |
-          Write-Verbose "XXXXX"
-          Write-Verbose -Verbose "$($env:GITHUB_WORKSPACE)/deployment/containerapps/cli/deploy.ps1 -resourceGroup $($env:resourceGroup) -location $($env:location) -logAnalyticsWorkspace $($env:logAnalyticsWorkspace) -environment $($env:containerAppEnvironment) -version $($env:GITHUB_RUN_NUMBER)"
-          #$env:GITHUB_WORKSPACE/deployment/containerapps/cli/deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -version $env:GITHUB_RUN_NUMBER
+          "XXXXX"
+          "$GITHUB_WORKSPACE/deployment/containerapps/cli/deploy.ps1 -resourceGroup $($env:resourceGroup) -location $($env:location) -logAnalyticsWorkspace $($env:logAnalyticsWorkspace) -environment $($env:containerAppEnvironment) -version $($env:GITHUB_RUN_NUMBER)"
+          $GITHUB_WORKSPACE/deployment/containerapps/cli/deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -version $env:GITHUB_RUN_NUMBER
           
         failOnStandardError: true
         azPSVersion: latest
