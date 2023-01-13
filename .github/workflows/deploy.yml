@@ -66,6 +66,8 @@ jobs:
       with:
         # Specify the Az PowerShell script here.
         inlineScript: |
+          Write-Host "$(GITHUB_WORKSPACE)/deployment/containerapps/cli/deploy.ps1 -resourceGroup $(resourceGroup) -location $(location) -logAnalyticsWorkspace $(logAnalyticsWorkspace) -environment $(containerAppEnvironment) -version $(GITHUB_RUN_NUMBER)"
+          Write-Host "$GITHUB_WORKSPACE/deployment/containerapps/cli/deploy.ps1 -resourceGroup $resourceGroup -location $(location) -logAnalyticsWorkspace $(logAnalyticsWorkspace) -environment $(containerAppEnvironment) -version $(GITHUB_RUN_NUMBER)"
           $(GITHUB_WORKSPACE)/deployment/containerapps/cli/deploy.ps1 -resourceGroup $(resourceGroup) -location $(location) -logAnalyticsWorkspace $(logAnalyticsWorkspace) -environment $(containerAppEnvironment) -version $(GITHUB_RUN_NUMBER)
           
         failOnStandardError: true
