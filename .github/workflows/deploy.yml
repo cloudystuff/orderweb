@@ -16,8 +16,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Build the Docker image
+    - name: Build orderweb
       run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$GITHUB_RUN_NUMBER"
+      
+    - name: Build orderapi
+      run: docker build . --file orderapi/Dockerfile --tag "jakob.azurecr.io/orderapi:$GITHUB_RUN_NUMBER"
+      
+    - name: Build orderprocessor
+      run: docker build . --file orderprocessor/Dockerfile --tag "jakob.azurecr.io/orderprocessor:$GITHUB_RUN_NUMBER"
       
     - name: Azure Container Registry Login
       uses: Azure/docker-login@v1
@@ -29,5 +35,40 @@ jobs:
         # Container registry server url
         login-server: jakob.azurecr.io
         
-    - name: Push image
+    - name: Push orderweb
       run: docker push "jakob.azurecr.io/orderweb:$GITHUB_RUN_NUMBER"
+      
+    - name: Push orderapi
+      run: docker push "jakob.azurecr.io/orderapi:$GITHUB_RUN_NUMBER"
+      
+    - name: Push orderprocessor
+      run: docker push "jakob.azurecr.io/orderprocessor:$GITHUB_RUN_NUMBER"      
+      
+  deployment:
+    runs-on: ubuntu-latest
+    environment: 
+      name: orderweb-test
+    env:
+      resourceGroup: containerapp
+      location: westeurope
+      logAnalyticsWorkspace: containerapps-logs
+      containerAppEnvironment: containerapp      
+    steps:
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true 
+        
+    - name: Azure PowerShell Action
+      uses: Azure/powershell@v1
+      with:
+        # Specify the Az PowerShell script here.
+        inlineScript: |
+          deploy.ps1 -resourceGroup $resourceGroup -location $location -logAnalyticsWorkspace $logAnalyticsWorkspace -environment $containerAppEnvironment -version $GITHUB_RUN_NUMBER
+          
+        failOnStandardError: true
+        working-directory: $GITHUB_WORKSPACE/deployment/containerapps/cli
+
+
+
