@@ -9,43 +9,43 @@ on:
 
 jobs:
 
-  build:
+  # build:
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v3
+  #   steps:
+  #   - uses: actions/checkout@v3
     
-    - name: Build orderweb
-      run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$GITHUB_RUN_NUMBER"
+  #   - name: Build orderweb
+  #     run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$GITHUB_RUN_NUMBER"
       
-    - name: Build orderapi
-      run: docker build . --file orderapi/Dockerfile --tag "jakob.azurecr.io/orderapi:$GITHUB_RUN_NUMBER"
+  #   - name: Build orderapi
+  #     run: docker build . --file orderapi/Dockerfile --tag "jakob.azurecr.io/orderapi:$GITHUB_RUN_NUMBER"
       
-    - name: Build orderprocessor
-      run: docker build . --file orderprocessor/Dockerfile --tag "jakob.azurecr.io/orderprocessor:$GITHUB_RUN_NUMBER"
+  #   - name: Build orderprocessor
+  #     run: docker build . --file orderprocessor/Dockerfile --tag "jakob.azurecr.io/orderprocessor:$GITHUB_RUN_NUMBER"
       
-    - name: Azure Container Registry Login
-      uses: Azure/docker-login@v1
-      with:
-        # Container registry username
-        username: jakob
-        # Container registry password
-        password: ${{ secrets.ACR_PASSWORD }}
-        # Container registry server url
-        login-server: jakob.azurecr.io
+  #   - name: Azure Container Registry Login
+  #     uses: Azure/docker-login@v1
+  #     with:
+  #       # Container registry username
+  #       username: jakob
+  #       # Container registry password
+  #       password: ${{ secrets.ACR_PASSWORD }}
+  #       # Container registry server url
+  #       login-server: jakob.azurecr.io
         
-    - name: Push orderweb
-      run: docker push "jakob.azurecr.io/orderweb:$GITHUB_RUN_NUMBER"
+  #   - name: Push orderweb
+  #     run: docker push "jakob.azurecr.io/orderweb:$GITHUB_RUN_NUMBER"
       
-    - name: Push orderapi
-      run: docker push "jakob.azurecr.io/orderapi:$GITHUB_RUN_NUMBER"
+  #   - name: Push orderapi
+  #     run: docker push "jakob.azurecr.io/orderapi:$GITHUB_RUN_NUMBER"
       
-    - name: Push orderprocessor
-      run: docker push "jakob.azurecr.io/orderprocessor:$GITHUB_RUN_NUMBER"      
+  #   - name: Push orderprocessor
+  #     run: docker push "jakob.azurecr.io/orderprocessor:$GITHUB_RUN_NUMBER"      
       
   deployment:
-    needs: build
+    #needs: build
     runs-on: ubuntu-latest
     environment: 
       name: orderweb-test
@@ -56,7 +56,7 @@ jobs:
       containerAppEnvironment: containerapp      
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Azure login
       uses: azure/login@v1
       with:
@@ -68,8 +68,6 @@ jobs:
       with:
         inlineScript: |
           "XXXXX"
-          "$GITHUB_WORKSPACE/deployment/containerapps/cli/deploy.ps1 -resourceGroup $($env:resourceGroup) -location $($env:location) -logAnalyticsWorkspace $($env:logAnalyticsWorkspace) -environment $($env:containerAppEnvironment) -version $($env:GITHUB_RUN_NUMBER)"
-          $GITHUB_WORKSPACE/deployment/containerapps/cli/deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -version $env:GITHUB_RUN_NUMBER
           
         failOnStandardError: true
         azPSVersion: latest
