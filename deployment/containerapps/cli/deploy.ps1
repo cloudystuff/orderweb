@@ -1,71 +1,87 @@
-$RESOURCE_GROUP="containerapp"
-$LOCATION="eastus"
-$LOG_ANALYTICS_WORKSPACE="containerapps-logs"
-$CONTAINERAPPS_ENVIRONMENT="containerapp-env"
+param(
+  $resourceGroup,
+  $location,
+  $logAnalyticsWorkspace,
+  $environment,
+  $version,
+  $acrRegistry,
+  $acrRegistryUsername,
+  $acrRgistryPassword
+)
+
+"resourceGroup: $resourceGroup"
+"location: $location"
+"logAnalyticsWorkspace: $logAnalyticsWorkspace"
+"environment: $environment"
+"version: $version"
+"acrRegistry: $acrRegistry"
+"acrRgistryPassword: $acrRgistryPassword"
 
 az config set extension.use_dynamic_install=yes_without_prompt
+#az upgrade --all -y
+az --version
 
 # Create resource group
 az group create `
-  --name $RESOURCE_GROUP `
-  --location "$LOCATION"
+  --name $resourceGroup `
+  --location "$location"
 
 # Create log analytics workspace
 az monitor log-analytics workspace create `
-  --resource-group $RESOURCE_GROUP `
-  --workspace-name $LOG_ANALYTICS_WORKSPACE
+  --resource-group $resourceGroup `
+  --workspace-name $logAnalyticsWorkspace
 
-$LOG_ANALYTICS_WORKSPACE_CLIENT_ID=(az monitor log-analytics workspace show --query customerId -g $RESOURCE_GROUP -n $LOG_ANALYTICS_WORKSPACE --out tsv)
-$LOG_ANALYTICS_WORKSPACE_CLIENT_SECRET=(az monitor log-analytics workspace get-shared-keys --query primarySharedKey -g $RESOURCE_GROUP -n $LOG_ANALYTICS_WORKSPACE --out tsv)
+$LOG_ANALYTICS_WORKSPACE_CLIENT_ID=(az monitor log-analytics workspace show --query customerId -g $resourceGroup -n $logAnalyticsWorkspace --out tsv)
+$LOG_ANALYTICS_WORKSPACE_CLIENT_SECRET=(az monitor log-analytics workspace get-shared-keys --query primarySharedKey -g $resourceGroup -n $logAnalyticsWorkspace --out tsv)
 
 # Create container apps environment
 az containerapp env create `
-  --name $CONTAINERAPPS_ENVIRONMENT `
-  --resource-group $RESOURCE_GROUP `
+  --name $environment `
+  --resource-group $resourceGroup `
   --logs-workspace-id $LOG_ANALYTICS_WORKSPACE_CLIENT_ID `
   --logs-workspace-key $LOG_ANALYTICS_WORKSPACE_CLIENT_SECRET `
-  --location "$LOCATION"
+  --location "$location"
 
 # Deploy orderweb
 az containerapp create `
     --name orderweb `
-    --resource-group $RESOURCE_GROUP `
-    --environment $CONTAINERAPPS_ENVIRONMENT `
-    --image jakob.azurecr.io/orderweb:1.5 `
+    --resource-group $resourceGroup `
+    --environment $environment `
+    --image $acrRegistry/orderweb:$appVersion `
     --target-port 5000 `
     --ingress 'external' `
     --enable-dapr `
     --dapr-app-port 5000 `
     --dapr-app-id orderweb `
     --dapr-components .\statestore.yaml `
-    --registry-login-server jakob.azurecr.io `
-    --registry-username jakob `
-    --registry-password BNZ4Cn50Q0=CW+g6IH1sYFpOSk1XaYGV `
+    --registry-login-server $acrRegistry `
+    --registry-username $acrRegistryUsername `
+    --registry-password $acrRegistryPassword `
     --environment-variables DAPR_HTTP_PORT=3500
 
 # Deploy orderapi
 az containerapp create `
     --name orderapi `
-    --resource-group $RESOURCE_GROUP `
-    --environment $CONTAINERAPPS_ENVIRONMENT `
-    --image jakob.azurecr.io/orderapi:1.5 `
+    --resource-group $resourceGroup `
+    --environment $environment `
+    --image $acrRegistry/orderapi:$appVersion `
     --target-port 5000 `
     --ingress 'internal' `
     --enable-dapr `
     --dapr-app-port 5000 `
     --dapr-app-id orderapi `
     --dapr-components .\statestore.yaml `
-    --registry-login-server jakob.azurecr.io `
-    --registry-username jakob `
-    --registry-password BNZ4Cn50Q0=CW+g6IH1sYFpOSk1XaYGV `
+    --registry-login-server $acrRegistry `
+    --registry-username $acrRegistryUsername `
+    --registry-password $acrRegistryPassword `
     --environment-variables DAPR_HTTP_PORT=3500
 
 # Deploy orderprocessor
 az containerapp create `
     --name orderprocessor `
-    --resource-group $RESOURCE_GROUP `
-    --environment $CONTAINERAPPS_ENVIRONMENT `
-    --image jakob.azurecr.io/orderprocessor:1.6 `
+    --resource-group $resourceGroup `
+    --environment $environment `
+    --image $acrRegistry/orderprocessor:$appVersion `
     --target-port 5000 `
     --ingress 'internal' `
     --min-replicas 1 `
@@ -74,7 +90,7 @@ az containerapp create `
     --dapr-app-port 5000 `
     --dapr-app-id orderprocessor `
     --dapr-components .\statestore.yaml `
-    --registry-login-server jakob.azurecr.io `
-    --registry-username jakob `
-    --registry-password BNZ4Cn50Q0=CW+g6IH1sYFpOSk1XaYGV `
+    --registry-login-server $acrRegistry `
+    --registry-username $acrRegistryUsername `
+    --registry-password $acrRegistryPassword `
     --environment-variables DAPR_HTTP_PORT=3500

@@ -50,10 +50,10 @@ jobs:
     environment: 
       name: orderweb-test
     env:
-      resourceGroup: containerapp
+      resourceGroup: orderwebtest
       location: westeurope
-      logAnalyticsWorkspace: containerapps-logs
-      containerAppEnvironment: containerapp      
+      logAnalyticsWorkspace: orderwebtest-logs
+      containerAppEnvironment: orderwebtest     
     steps:
     - uses: actions/checkout@v3
 
@@ -64,7 +64,7 @@ jobs:
         enable-AzPSSession: true 
       
     - name: Deploy bicep
-      run: ./deployment/containerapps/cli/deploy.ps1 -resourceGroup $resourceGroup -location $location -logAnalyticsWorkspace $logAnalyticsWorkspace -environment $containerAppEnvironment -version 29
+      run: ./deployment/containerapps/cli/deploy.ps1 -resourceGroup $resourceGroup -location $location -logAnalyticsWorkspace $logAnalyticsWorkspace -environment $containerAppEnvironment -version 29 -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
       shell: pwsh
 
 
