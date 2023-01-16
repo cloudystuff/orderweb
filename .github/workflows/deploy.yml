@@ -66,5 +66,6 @@ jobs:
     - name: Deploy bicep
       run: ./deployment/containerapps/cli/deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -version 29 -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
       shell: pwsh
+      working-directory: ./deployment/containerapps/cli
 
 
