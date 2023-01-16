@@ -92,7 +92,6 @@ az containerapp create `
     --enable-dapr `
     --dapr-app-port 5000 `
     --dapr-app-id orderprocessor `
-    --dapr-components .\statestore.yaml `
     --registry-server $acrRegistry `
     --registry-username $acrRegistryUsername `
     --registry-password $acrRegistryPassword `
