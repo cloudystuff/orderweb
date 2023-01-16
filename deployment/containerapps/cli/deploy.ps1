@@ -3,7 +3,7 @@ param(
   $location,
   $logAnalyticsWorkspace,
   $environment,
-  $version,
+  $appVersion,
   $acrRegistry,
   $acrRegistryUsername,
   $acrRegistryPassword
@@ -13,7 +13,7 @@ param(
 "location: $location"
 "logAnalyticsWorkspace: $logAnalyticsWorkspace"
 "environment: $environment"
-"version: $version"
+"appVersion: $appVersion"
 "acrRegistry: $acrRegistry"
 "acrRegistryPassword: $acrRegistryPassword"
 
