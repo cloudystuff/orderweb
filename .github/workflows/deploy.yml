@@ -74,7 +74,7 @@ jobs:
     needs: deploytest
     runs-on: ubuntu-latest
     environment: 
-      name: orderweb-test
+      name: orderweb-prod
     env:
       resourceGroup: orderwebprod
       location: westeurope
