@@ -42,6 +42,11 @@ az containerapp env create `
   --logs-workspace-key $LOG_ANALYTICS_WORKSPACE_CLIENT_SECRET `
   --location "$location"
 
+az containerapp env dapr-component set `
+  --name $environment --resource-group $resourceGroup `
+  --dapr-component-name statestore `
+  --yaml statestore.yaml
+
 # Deploy orderweb
 az containerapp create `
     --name orderweb `
@@ -53,11 +58,10 @@ az containerapp create `
     --enable-dapr `
     --dapr-app-port 5000 `
     --dapr-app-id orderweb `
-    --dapr-components .\statestore.yaml `
     --registry-login-server $acrRegistry `
     --registry-username $acrRegistryUsername `
     --registry-password $acrRegistryPassword `
-    --environment-variables DAPR_HTTP_PORT=3500
+    --env-vars DAPR_HTTP_PORT=3500
 
 # Deploy orderapi
 az containerapp create `
@@ -70,11 +74,10 @@ az containerapp create `
     --enable-dapr `
     --dapr-app-port 5000 `
     --dapr-app-id orderapi `
-    --dapr-components .\statestore.yaml `
     --registry-login-server $acrRegistry `
     --registry-username $acrRegistryUsername `
     --registry-password $acrRegistryPassword `
-    --environment-variables DAPR_HTTP_PORT=3500
+    --env-vars DAPR_HTTP_PORT=3500
 
 # Deploy orderprocessor
 az containerapp create `
@@ -93,4 +96,4 @@ az containerapp create `
     --registry-login-server $acrRegistry `
     --registry-username $acrRegistryUsername `
     --registry-password $acrRegistryPassword `
-    --environment-variables DAPR_HTTP_PORT=3500
+    --env-vars DAPR_HTTP_PORT=3500
