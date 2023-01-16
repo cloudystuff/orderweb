@@ -44,8 +44,9 @@ jobs:
   #   - name: Push orderprocessor
   #     run: docker push "jakob.azurecr.io/orderprocessor:$GITHUB_RUN_NUMBER"      
       
-  deployment:
-    #needs: build
+  deploytest:
+    name: deploy test
+    needs: build
     runs-on: ubuntu-latest
     environment: 
       name: orderweb-test
@@ -67,5 +68,32 @@ jobs:
       run: ./deployment/containerapps/cli/deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -version 29 -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
       shell: pwsh
       working-directory: ./deployment/containerapps/cli
+
+  deployprod:
+    name: deploy prod
+    needs: deploytest
+    runs-on: ubuntu-latest
+    environment: 
+      name: orderweb-test
+    env:
+      resourceGroup: orderwebtest
+      location: westeurope
+      logAnalyticsWorkspace: orderwebtest-logs
+      containerAppEnvironment: orderwebtest     
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true 
+      
+    - name: Deploy bicep
+      run: ./deployment/containerapps/cli/deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -version 29 -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
+      shell: pwsh
+      working-directory: ./deployment/containerapps/cli
+
+
 
 
