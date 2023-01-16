@@ -6,7 +6,7 @@ param(
   $version,
   $acrRegistry,
   $acrRegistryUsername,
-  $acrRgistryPassword
+  $acrRegistryPassword
 )
 
 "resourceGroup: $resourceGroup"
@@ -18,7 +18,7 @@ param(
 "acrRegistryPassword: $acrRegistryPassword"
 
 az config set extension.use_dynamic_install=yes_without_prompt
-#az upgrade --all -y
+az extension add --name containerapp --upgrade
 az --version
 
 # Create resource group
