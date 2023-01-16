@@ -58,7 +58,7 @@ az containerapp create `
     --enable-dapr `
     --dapr-app-port 5000 `
     --dapr-app-id orderweb `
-    --registry-login-server $acrRegistry `
+    --registry-server $acrRegistry `
     --registry-username $acrRegistryUsername `
     --registry-password $acrRegistryPassword `
     --env-vars DAPR_HTTP_PORT=3500
@@ -74,7 +74,7 @@ az containerapp create `
     --enable-dapr `
     --dapr-app-port 5000 `
     --dapr-app-id orderapi `
-    --registry-login-server $acrRegistry `
+    --registry-server $acrRegistry `
     --registry-username $acrRegistryUsername `
     --registry-password $acrRegistryPassword `
     --env-vars DAPR_HTTP_PORT=3500
@@ -93,7 +93,7 @@ az containerapp create `
     --dapr-app-port 5000 `
     --dapr-app-id orderprocessor `
     --dapr-components .\statestore.yaml `
-    --registry-login-server $acrRegistry `
+    --registry-server $acrRegistry `
     --registry-username $acrRegistryUsername `
     --registry-password $acrRegistryPassword `
     --env-vars DAPR_HTTP_PORT=3500
