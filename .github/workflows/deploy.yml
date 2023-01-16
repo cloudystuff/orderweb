@@ -76,10 +76,10 @@ jobs:
     environment: 
       name: orderweb-test
     env:
-      resourceGroup: orderwebtest
+      resourceGroup: orderwebprod
       location: westeurope
-      logAnalyticsWorkspace: orderwebtest-logs
-      containerAppEnvironment: orderwebtest     
+      logAnalyticsWorkspace: orderwebprod-logs
+      containerAppEnvironment: orderwebprod
     steps:
     - uses: actions/checkout@v3
 
