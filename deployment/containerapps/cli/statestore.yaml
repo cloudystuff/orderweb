@@ -1,20 +1,17 @@
-# components.yaml for Azure Blob storage component
-- name: statestore
-  type: state.azure.cosmosdb
-  version: v1
-  metadata:
+componentType: state.azure.cosmosdb
+version: v1
+metadata:
   - name: url
-    value: $COSMOS_URL
+    value: "$COSMOS_URL"
   - name: masterKey
-    value: $COSMOS_MASTERKEY
+    value: "$COSMOS_MASTERKEY"
   - name: database
     value: daprdemo
   - name: collection
-    value: orders
+    value: "orders"
 
-- name: orderpubsub
-  type: pubsub.azure.servicebus
-  version: v1
-  metadata:
-  - name: connectionString # Required
-    value: $PUBSUB_CONNECTIONSTRING
+componentType: state.azure.servicebus
+version: v1
+metadata:
+  - name: connectionString
+    value: "$PUBSUB_CONNECTIONSTRING"
