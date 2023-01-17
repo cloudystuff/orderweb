@@ -59,7 +59,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: datamonsters/replace-action
+    - name: Replace Action
+      uses: datamonsters/replace-action@v2
       with:
         files: 'components/pubsub.yaml,components/state-cosmos.yaml'
         replacements: '$COSMOSURL=$env:cosmusUrl,$COSMOSMASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUBSUB_CONNECTIONSTRING=${{ secrets.PUBSUB_CONNECTIONSTRING }}'    
