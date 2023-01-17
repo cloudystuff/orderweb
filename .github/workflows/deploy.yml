@@ -62,7 +62,7 @@ jobs:
     - name: Replace Action
       uses: datamonsters/replace-action@v2
       with:
-        files: 'components/pubsub.yaml,components/state-cosmos.yaml'
+        files: 'deployment/containerapps/cli/statestore.yaml'
         replacements: '$COSMOS_URL=$env:cosmusUrl,$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUB_SUBCONNECTIONSTRING=${{ secrets.PUBSUB_CONNECTIONSTRING }}'    
 
     - name: Azure login
