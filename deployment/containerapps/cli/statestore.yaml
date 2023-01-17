@@ -4,9 +4,9 @@
   version: v1
   metadata:
   - name: url
-    value: https://daprstate.documents.azure.com:443/
+    value: $COSMOS_URL
   - name: masterKey
-    value: REPLACE
+    value: $COSMOS_MASTERKEY
   - name: database
     value: daprdemo
   - name: collection
@@ -17,4 +17,4 @@
   version: v1
   metadata:
   - name: connectionString # Required
-    value: REPLACE
+    value: $PUBSUB_CONNECTIONSTRING
