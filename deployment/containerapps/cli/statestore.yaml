@@ -10,7 +10,7 @@ metadata:
   - name: collection
     value: "orders"
 
-componentType: state.azure.servicebus
+componentType: pubsub.azure.servicebus
 version: v1
 metadata:
   - name: connectionString
