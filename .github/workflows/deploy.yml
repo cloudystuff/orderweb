@@ -72,7 +72,7 @@ jobs:
         enable-AzPSSession: true 
             
     - name: Deploy bicep
-      run: ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -appVersion 48 -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
+      run: ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
       shell: pwsh
       working-directory: ./deployment/containerapps/cli
 
