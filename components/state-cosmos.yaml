@@ -6,9 +6,9 @@ spec:
   type: state.azure.cosmosdb
   metadata:
   - name: url
-    value: REPLACE
+    value: [COSMOSURL]
   - name: masterKey
-    value: REPLACE
+    value: [COSMOSMASTERKEY]
   - name: database
     value: daprdemo
   - name: collection
