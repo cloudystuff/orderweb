@@ -34,7 +34,7 @@ public class OrderController : ControllerBase
             string databaseName = "daprdemo";
             string containerName = "orders";
             string account = "https://daprstate.documents.azure.com:443/";
-            string key = "h8PNFT7S8DeM2vKJZXaIc6oUwMRh6c1tnLXWk6u4wMxvrgkPwIyyq5OY5oliua9ITUPRPnpWBOgd5Y2wZNhb5A==";
+            string key = "bzABmFl1uvFNyYy5OxlJLBogbKu6q9evbDgB1YKdTW68thv8GMWKndG0yqmWTf1iQpI0slOQ2effACDbb6Vjgw==";
             
             var client = new Microsoft.Azure.Cosmos.CosmosClient(account, key);
             var _container = client.GetContainer(databaseName, containerName);
