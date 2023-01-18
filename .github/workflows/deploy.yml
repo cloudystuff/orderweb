@@ -64,7 +64,7 @@ jobs:
       uses: datamonsters/replace-action@v2
       with:
         files: 'deployment/containerapps/cli/cosmos.yaml,deployment/containerapps/cli/servicebus.yaml'
-        replacements: '$COSMOS_URL=$env:cosmosUrl,$COSMOS_COLLECTION=$env:cosmosCollection,$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUB_SUBCONNECTIONSTRING=${{ secrets.PUBSUB_CONNECTIONSTRING }}'    
+        replacements: '$COSMOS_URL=$($env:cosmosUrl),$COSMOS_COLLECTION=$env:cosmosCollection,$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUB_SUBCONNECTIONSTRING=${{ secrets.PUBSUB_CONNECTIONSTRING }}'    
 
     - name: Azure login
       uses: azure/login@v1
@@ -73,7 +73,7 @@ jobs:
         enable-AzPSSession: true 
             
     - name: Deploy bicep
-      run: ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
+      run: ./deploy.ps1 -resourceGroup $resourceGroup -location $location -logAnalyticsWorkspace $logAnalyticsWorkspace -environment $containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
       shell: pwsh
       working-directory: ./deployment/containerapps/cli
 
@@ -102,11 +102,11 @@ jobs:
     - name: Replace Action
       uses: datamonsters/replace-action@v2
       with:
-        files: 'deployment/containerapps/cli/statestore.yaml'
-        replacements: '$COSMOS_URL=$env:cosmosUrl,$COSMOS_COLLECTION=$env:cosmosCollection,$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUB_SUBCONNECTIONSTRING=${{ secrets.PUBSUB_CONNECTIONSTRING }}'            
+        files: 'deployment/containerapps/cli/cosmos.yaml,deployment/containerapps/cli/servicebus.yaml'
+        replacements: '$COSMOS_URL=$cosmosUrl,$COSMOS_COLLECTION=$env:cosmosCollection,$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUB_SUBCONNECTIONSTRING=${{ secrets.PUBSUB_CONNECTIONSTRING }}'    
       
     - name: Deploy bicep
-      run: ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
+      run: ./deploy.ps1 -resourceGroup $resourceGroup -location $location -logAnalyticsWorkspace $logAnalyticsWorkspace -environment $containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
       shell: pwsh
       working-directory: ./deployment/containerapps/cli
 
