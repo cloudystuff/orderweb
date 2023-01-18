@@ -56,6 +56,7 @@ jobs:
       logAnalyticsWorkspace: orderwebtest-logs
       containerAppEnvironment: orderwebtest
       cosmosUrl: https://daprstate.documents.azure.com:443/
+      cosmosCollection: orders
     steps:
     - uses: actions/checkout@v3
 
@@ -63,7 +64,7 @@ jobs:
       uses: datamonsters/replace-action@v2
       with:
         files: 'deployment/containerapps/cli/statestore.yaml'
-        replacements: '$COSMOS_URL=$env:cosmusUrl,$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUB_SUBCONNECTIONSTRING=${{ secrets.PUBSUB_CONNECTIONSTRING }}'    
+        replacements: '$COSMOS_URL=$env:cosmosUrl,$COSMOS_COLLECTION=$env:cosmosCollection,$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUB_SUBCONNECTIONSTRING=${{ secrets.PUBSUB_CONNECTIONSTRING }}'    
 
     - name: Azure login
       uses: azure/login@v1
@@ -87,6 +88,8 @@ jobs:
       location: westeurope
       logAnalyticsWorkspace: orderwebprod-logs
       containerAppEnvironment: orderwebprod
+      cosmosUrl: https://daprstate.documents.azure.com:443/
+      cosmosCollection: ordersProd
     steps:
     - uses: actions/checkout@v3
 
@@ -94,7 +97,13 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-        enable-AzPSSession: true 
+        enable-AzPSSession: true
+
+    - name: Replace Action
+      uses: datamonsters/replace-action@v2
+      with:
+        files: 'deployment/containerapps/cli/statestore.yaml'
+        replacements: '$COSMOS_URL=$env:cosmosUrl,$COSMOS_COLLECTION=$env:cosmosCollection,$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUB_SUBCONNECTIONSTRING=${{ secrets.PUBSUB_CONNECTIONSTRING }}'            
       
     - name: Deploy bicep
       run: ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}

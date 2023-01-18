@@ -1,0 +1,5 @@
+componentType: pubsub.azure.servicebus
+version: v1
+metadata:
+  - name: connectionString
+    value: "$PUBSUB_CONNECTIONSTRING"

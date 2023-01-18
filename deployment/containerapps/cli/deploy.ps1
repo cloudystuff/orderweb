@@ -45,7 +45,12 @@ az containerapp env create `
 az containerapp env dapr-component set `
   --name $environment --resource-group $resourceGroup `
   --dapr-component-name statestore `
-  --yaml statestore.yaml
+  --yaml cosmos.yaml
+
+az containerapp env dapr-component set `
+  --name $environment --resource-group $resourceGroup `
+  --dapr-component-name orderpubsub `
+  --yaml servicebus.yaml
 
 # Deploy orderweb
 az containerapp create `
