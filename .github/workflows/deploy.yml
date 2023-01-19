@@ -55,10 +55,10 @@ jobs:
       location: westeurope
       logAnalyticsWorkspace: orderwebtest-logs
       containerAppEnvironment: orderwebtest
-      cosmosUrl: https://daprstate.documents.azure.com:443/
+      cosmosUrl: "https://daprstate.documents.azure.com:443/"
       cosmosCollection: orders
-      cosmosMasterKey: ${{ secrets.COSMOS_MASTERKEY }}
-      pubsubConnectionString: ${{ secrets.PUBSUB_CONNECTIONSTRING }}
+      cosmosMasterKey: "${{ secrets.COSMOS_MASTERKEY }}"
+      pubsubConnectionString: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
     steps:
     - uses: actions/checkout@v3
 
