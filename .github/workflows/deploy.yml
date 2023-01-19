@@ -57,13 +57,15 @@ jobs:
       containerAppEnvironment: orderwebtest
       cosmosUrl: https://daprstate.documents.azure.com:443/
       cosmosCollection: orders
+      cosmosMasterKey: ${{ secrets.COSMOS_MASTERKEY }}
+      pubsubConnectionString: ${{ secrets.PUBSUB_CONNECTIONSTRING }}
     steps:
     - uses: actions/checkout@v3
 
     - name: Replace tokens
       uses: cschleiden/replace-tokens@v1
       with:
-        files: 'deployment/containerapps/cli/*.yaml'
+        files: '[deployment/containerapps/cli/*.yaml]'
 
     - name: Azure login
       uses: azure/login@v1
