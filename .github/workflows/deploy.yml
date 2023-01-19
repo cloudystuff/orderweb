@@ -60,11 +60,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Replace Action
-      uses: datamonsters/replace-action@v2
+    - name: Replace tokens
+      uses: cschleiden/replace-tokens@v1
       with:
-        files: 'deployment/containerapps/cli/cosmos.yaml,deployment/containerapps/cli/servicebus.yaml'
-        replacements: '$COSMOS_URL=${{ env.cosmosUrl }},$COSMOS_COLLECTION=${{ env.cosmosCollection }},$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUBSUB_CONNECTIONSTRING="${{ secrets.PUBSUB_CONNECTIONSTRING }}"'
+        files: 'deployment/containerapps/cli/*.yaml'
 
     - name: Azure login
       uses: azure/login@v1
