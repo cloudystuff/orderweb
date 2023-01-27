@@ -76,7 +76,7 @@ jobs:
 
     - uses: falnyr/replace-env-vars-action@master
       env:
-        PUBSUBCONNECTIONSTRING: ${{ secrets.PUBSUB_CONNECTIONSTRING }}
+        PUBSUBCONNECTIONSTRING: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
       with:
         filename: deployment/containerapps/cli/servicebus.yaml         
 

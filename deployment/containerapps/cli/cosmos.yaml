@@ -2,10 +2,10 @@ componentType: state.azure.cosmosdb
 version: v1
 metadata:
   - name: url
-    value: __COSMOSURL__
+    value: "__COSMOSURL__"
   - name: masterKey
-    value: __COSMOSMASTERKEY__
+    value: "__COSMOSMASTERKEY__"
   - name: database
-    value: __COSMOSDATABASE__
+    value: "__COSMOSDATABASE__"
   - name: collection
-    value: __COSMOSCOLLECTION__
+    value: "__COSMOSCOLLECTION__"
