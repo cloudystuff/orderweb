@@ -19,9 +19,9 @@ public class OrderCreatedController : ControllerBase
     [HttpPost("ordercreated")]
     public async Task Post([FromBody]Order order, [FromServices] DaprClient daprClient)
     {
-        Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Processing order " + order.Id.ToString());
+        Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Processing order " + order.Id);
         await daprClient.SaveStateAsync<Order>("statestore", order.Id.ToString(), order);        
         await Task.Delay(2000);
-        Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Done with order " + order.Id.ToString());
+        Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Done with order " + order.Id);
     }    
 }
