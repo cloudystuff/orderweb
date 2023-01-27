@@ -2,4 +2,4 @@ componentType: pubsub.azure.servicebus
 version: v1
 metadata:
   - name: connectionString
-    value: "Endpoint=sb://daprbus-demo.servicebus.windows.net/;SharedAccessKeyName=containerapp;SharedAccessKey=cUdEjfHEyilv8dFeFdprs6btK4FGCZL6UeaQD6Bx2nU="
+    value: __PUBSUBCONNECTIONSTRING__

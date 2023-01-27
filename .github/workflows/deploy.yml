@@ -60,10 +60,25 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Replace tokens
-      uses: cschleiden/replace-tokens@v1
+    # - name: Replace tokens
+    #   uses: cschleiden/replace-tokens@v1
+    #   with:
+    #     files: '[deployment/containerapps/cli/*.yaml]'
+
+    - uses: falnyr/replace-env-vars-action@master
+      env:
+        COSMOSURL: "https://daprstate.documents.azure.com:443/"
+        COSMOSMASTERKEY: ${{ secrets.COSMOS_MASTERKEY }}
+        COSMOSCOLLECTION: orders
+        COSMOSDATABASE: daprdemo
       with:
-        files: '[deployment/containerapps/cli/*.yaml]'
+        filename: deployment/containerapps/cli/cosmos.yaml
+
+    - uses: falnyr/replace-env-vars-action@master
+      env:
+        PUBSUBCONNECTIONSTRING: ${{ secrets.PUBSUB_CONNECTIONSTRING }}
+      with:
+        filename: deployment/containerapps/cli/servicebus.yaml         
 
     - name: Azure login
       uses: azure/login@v1
