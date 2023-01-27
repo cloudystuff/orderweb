@@ -25,6 +25,7 @@ public class OrderController : ControllerBase
     [HttpGet]
     public async Task<List<Order>> Get()
     {
+        int k=0;
         var query = "{" +
                     "}";
 
