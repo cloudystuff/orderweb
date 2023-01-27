@@ -48,6 +48,7 @@ jobs:
     name: deploy test
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'    
     environment: 
       name: orderweb-test
     env:
@@ -95,6 +96,7 @@ jobs:
     name: deploy prod
     needs: deploytest
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'    
     environment: 
       name: orderweb-prod
     env:
