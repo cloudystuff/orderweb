@@ -15,6 +15,8 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '30 19 * * 3'
+  pull_request:
+    branches: [ "master" ]    
 
 jobs:
   analyze:
