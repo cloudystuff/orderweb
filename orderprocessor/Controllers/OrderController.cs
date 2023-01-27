@@ -21,6 +21,7 @@ public class OrderCreatedController : ControllerBase
     {
         //
         //
+        //
         Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Processing order " + order.Id);
         await daprClient.SaveStateAsync<Order>("statestore", order.Id.ToString(), order);        
         await Task.Delay(2000);
