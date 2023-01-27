@@ -27,6 +27,7 @@ public class OrderController : ControllerBase
     {
         int k=0;
         int y=1;
+        int z=3;
         var query = "{" +
                     "}";
 
