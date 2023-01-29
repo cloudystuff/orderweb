@@ -109,7 +109,7 @@ jobs:
       env:
         COSMOSURL: "https://daprstate.documents.azure.com:443/"
         COSMOSMASTERKEY: ${{ secrets.COSMOS_MASTERKEY }}
-        COSMOSCOLLECTION: orders
+        COSMOSCOLLECTION: ordersprod
         COSMOSDATABASE: daprdemo
         PUBSUBCONNECTIONSTRING: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
       with:
