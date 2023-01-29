@@ -61,26 +61,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # - name: Replace tokens
-    #   uses: cschleiden/replace-tokens@v1
-    #   with:
-    #     files: '[deployment/containerapps/cli/*.yaml]'
-
-    # - uses: falnyr/replace-env-vars-action@master
-    #   env:
-    #     COSMOSURL: "https://daprstate.documents.azure.com:443/"
-    #     COSMOSMASTERKEY: ${{ secrets.COSMOS_MASTERKEY }}
-    #     COSMOSCOLLECTION: orders
-    #     COSMOSDATABASE: daprdemo
-    #   with:
-    #     filename: deployment/containerapps/cli/cosmos.yaml        
-
-    # - uses: falnyr/replace-env-vars-action@master
-    #   env:
-    #     PUBSUBCONNECTIONSTRING: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
-    #   with:
-    #     filename: deployment/containerapps/cli/servicebus.yaml         
-
     - uses: sandersaares-actions/expand-tokens@master
       env:
         COSMOSURL: "https://daprstate.documents.azure.com:443/"
@@ -125,14 +105,19 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true
 
-    - name: Replace Action
-      uses: datamonsters/replace-action@v2
+    - uses: sandersaares-actions/expand-tokens@master
+      env:
+        COSMOSURL: "https://daprstate.documents.azure.com:443/"
+        COSMOSMASTERKEY: ${{ secrets.COSMOS_MASTERKEY }}
+        COSMOSCOLLECTION: orders
+        COSMOSDATABASE: daprdemo
+        PUBSUBCONNECTIONSTRING: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
       with:
-        files: 'deployment/containerapps/cli/cosmos.yaml,deployment/containerapps/cli/servicebus.yaml'
-        replacements: '$COSMOS_URL=${{ env.cosmosUrl }},$COSMOS_COLLECTION=${{ env.cosmosCollection }},$COSMOS_MASTERKEY=${{ secrets.COSMOS_MASTERKEY }}, $PUBSUB_CONNECTIONSTRING="${{ secrets.PUBSUB_CONNECTIONSTRING }}"'    
+        path: deployment/containerapps/cli
+
       
     - name: Deploy bicep
-      run: ./deploy.ps1 -resourceGroup $resourceGroup -location $location -logAnalyticsWorkspace $logAnalyticsWorkspace -environment $containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
+      run: ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}           
       shell: pwsh
       working-directory: ./deployment/containerapps/cli
 
