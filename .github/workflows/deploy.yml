@@ -66,20 +66,30 @@ jobs:
     #   with:
     #     files: '[deployment/containerapps/cli/*.yaml]'
 
-    - uses: falnyr/replace-env-vars-action@master
+    # - uses: falnyr/replace-env-vars-action@master
+    #   env:
+    #     COSMOSURL: "https://daprstate.documents.azure.com:443/"
+    #     COSMOSMASTERKEY: ${{ secrets.COSMOS_MASTERKEY }}
+    #     COSMOSCOLLECTION: orders
+    #     COSMOSDATABASE: daprdemo
+    #   with:
+    #     filename: deployment/containerapps/cli/cosmos.yaml        
+
+    # - uses: falnyr/replace-env-vars-action@master
+    #   env:
+    #     PUBSUBCONNECTIONSTRING: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
+    #   with:
+    #     filename: deployment/containerapps/cli/servicebus.yaml         
+
+    - uses: sandersaares-actions/expand-tokens@master
       env:
         COSMOSURL: "https://daprstate.documents.azure.com:443/"
         COSMOSMASTERKEY: ${{ secrets.COSMOS_MASTERKEY }}
         COSMOSCOLLECTION: orders
         COSMOSDATABASE: daprdemo
-      with:
-        filename: deployment/containerapps/cli/cosmos.yaml
-
-    - uses: falnyr/replace-env-vars-action@master
-      env:
         PUBSUBCONNECTIONSTRING: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
       with:
-        filename: deployment/containerapps/cli/servicebus.yaml         
+        path: deployment/containerapps/cli
 
     - name: Azure login
       uses: azure/login@v1
