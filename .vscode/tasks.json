@@ -96,7 +96,7 @@
             "grpcPort": 50002,
             "label": "orderapi-daprd-debug",
             "type": "daprd",
-            "dependsOn": "build-orderapi",            
+            "dependsOn": "build-orderapi",
             "presentation": {
                 "close": true
             },

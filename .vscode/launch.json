@@ -10,7 +10,7 @@
             "args": [],
             "cwd": "${workspaceFolder}/orderweb",
             "stopAtEntry": false,
-            "serverReadyAction": { 
+            "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },

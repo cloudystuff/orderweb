@@ -1,6 +1,6 @@
 # [Choice] .NET version: 5.0, 3.1, 2.1
-ARG VARIANT=latest
-FROM mcr.microsoft.com/vscode/devcontainers/dotnet:${VARIANT}
+ARG VARIANT=6.0
+FROM mcr.microsoft.com/devcontainers/dotnet:0-${VARIANT}
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
@@ -22,9 +22,7 @@ ARG USERNAME=vscode
 # Install needed packages and setup non-root user. Use a separate RUN statement to add your
 # own dependencies. A user of "automatic" attempts to reuse an user ID if one already exists.
 COPY library-scripts/docker-debian.sh /tmp/library-scripts/
-RUN apt-get update \
-    # Use Docker script from script library to set things up
-    && /bin/bash /tmp/library-scripts/docker-debian.sh "${ENABLE_NONROOT_DOCKER}" "/var/run/docker-host.sock" "/var/run/docker.sock" "${USERNAME}" \
+RUN /bin/bash /tmp/library-scripts/docker-debian.sh "${ENABLE_NONROOT_DOCKER}" "/var/run/docker-host.sock" "/var/run/docker.sock" "${USERNAME}" \
     # Install Dapr
     && wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash \
     # Clean up

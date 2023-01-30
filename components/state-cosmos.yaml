@@ -6,12 +6,14 @@ spec:
   type: state.azure.cosmosdb
   metadata:
   - name: url
-    value: $COSMOS_URL
+    value: https://daprstate.documents.azure.com:443/
   - name: masterKey
-    value: $COSMOS_MASTERKEY
+    value: REPLACE
   - name: database
     value: daprdemo
   - name: collection
-    value: $COSMOS_COLLECTION
+    value: orders
   - name: keyPrefix
     value: name
+auth:
+  secretStore: envvar-secret-store
