@@ -1,3 +1,4 @@
 {
-    "razor.disabled": true
+    "razor.disabled": true,
+    "dapr.paths.daprdPath": "/home/vscode/.dapr/bin/daprd"
 }
