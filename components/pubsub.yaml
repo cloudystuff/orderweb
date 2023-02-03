@@ -6,5 +6,9 @@ spec:
   type: pubsub.azure.servicebus
   version: v1
   metadata:
-  - name: connectionString # Required
-    value: REPLACE
+  - name: connectionString
+    secretKeyRef: 
+      name: PUBSUBCONNECTIONSTRING
+      key: PUBSUBCONNECTIONSTRING
+auth:
+  secretStore: orderweb-secret-store

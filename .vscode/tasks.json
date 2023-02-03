@@ -109,7 +109,7 @@
             "metricsPort": 9092,
             "grpcPort": 50003,
             "label": "orderprocessor-daprd-debug",
-            "type": "daprd",
+            "type": "daprd",            
             "dependsOn": "build-orderprocessor",
             "presentation": {
                 "close": false

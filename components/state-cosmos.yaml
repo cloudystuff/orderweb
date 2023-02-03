@@ -8,7 +8,9 @@ spec:
   - name: url
     value: https://daprstate.documents.azure.com:443/
   - name: masterKey
-    value: REPLACE
+    secretKeyRef:
+      name: COSMOSMASTERKEY 
+      key: COSMOSMASTERKEY
   - name: database
     value: daprdemo
   - name: collection
@@ -16,4 +18,4 @@ spec:
   - name: keyPrefix
     value: name
 auth:
-  secretStore: envvar-secret-store
+  secretStore: orderweb-secret-store
