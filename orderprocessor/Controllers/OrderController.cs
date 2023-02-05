@@ -24,5 +24,13 @@ public class OrderCreatedController : ControllerBase
         await daprClient.SaveStateAsync<Order>("statestore", order.Id.ToString(), order);        
         await Task.Delay(2000);
         Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Done with order " + order.Id);
-    }       
+    }    
+
+    [HttpGet("badcontroller")]
+    public async Task BadControllerAction(string name, string id)
+    {
+        SqlConnection con = new SqlConnection("localdb");
+        var cmd = new SqlCommand("UPDATE dbo.Person SET Name = " + name + " WHERE Id = " + id, con);
+        var result = await cmd.ExecuteScalarAsync();
+    }        
 }
