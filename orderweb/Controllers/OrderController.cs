@@ -20,7 +20,7 @@ public class OrderController : Controller
 
         var model = new OrdersViewModel()
         {
-            Orders = orders
+            Orders = orders.OrderByDescending(o => o.CreatedAt).ToList()
         };
         return View(model);
     }
