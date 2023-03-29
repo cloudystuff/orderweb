@@ -1,2 +1,2 @@
 # orderweb
-[Developer setup](/skeleton/blob/master/skeleton-admin/README.md)
+[Developer setup](skeleton-admin/README.md)
