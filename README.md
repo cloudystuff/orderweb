@@ -1,2 +1,2 @@
 # orderweb
-[Developer setup](skeleton-admin/README.md)
+[Developer setup](orderapi/program.cs)
