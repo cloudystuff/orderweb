@@ -100,7 +100,7 @@ jobs:
         resourceGroupName: ${{ env.resourceGroup}}
         template: ./deployment/containerapps/bicep/main.bicep
         deploymentMode: Incremental
-        parameters: version=${{ steps.getimages.outputs.imageVersion }} location=$env:location environment=$env:containerAppEnvironment        
+        parameters: version=${{ steps.getimages.outputs.imageVersion }} location=$location environment_name=$containerAppEnvironment        
 
     - name: Get current revision name
       id: getcurrentrevisionname
