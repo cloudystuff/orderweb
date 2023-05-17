@@ -73,7 +73,7 @@ jobs:
         COSMOSDATABASE: daprdemo
         PUBSUBCONNECTIONSTRING: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
       with:
-        path: deployment/containerapps/cli
+        path: deployment/containerapps/bicep
 
     - name: Azure login
       uses: azure/login@v1
@@ -84,7 +84,7 @@ jobs:
     - name: Deploy bicep
       run:  ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -environment $env:containerAppEnvironment -version $env:GITHUB_RUN_NUMBER           
       shell: pwsh
-      working-directory: ./deployment/bicep
+      working-directory: deployment/containerapps/bicep
 
   deployprod:
     name: deploy prod
@@ -117,12 +117,12 @@ jobs:
         COSMOSDATABASE: daprdemo
         PUBSUBCONNECTIONSTRING: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
       with:
-        path: deployment/containerapps/cli
+        path: deployment/containerapps/bicep
 
     - name: Deploy bicep
       run:  ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -environment $env:containerAppEnvironment -version $env:GITHUB_RUN_NUMBER           
       shell: pwsh
-      working-directory: ./deployment/bicep
+      working-directory: ./deployment/containerapps/bicep
 
 
 
