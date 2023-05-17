@@ -88,7 +88,7 @@ jobs:
           echo $resourceGroup
           az extension add -n containerapp --yes
           containerImage=$(az containerapp show --name orderweb --resource-group $resourceGroup --query "properties.template.containers[0].image" -o tsv)
-          IFS=';' read -ra imageArray <<< "$containerImage
+          IFS=';' read -ra imageArray <<< "$containerImage"
           echo ${imageArray[1]}  
           echo "::set-output name=imageVersion::${imageArray[1]}"
     
