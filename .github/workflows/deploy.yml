@@ -85,10 +85,12 @@ jobs:
       id: getimages
       run: |
           echo "Installing containerapp extension"
-          echo $env:resourceGroup
+          echo $resourceGroup
           az extension add -n containerapp --yes
-          containerImage=$(az containerapp show --name orderweb --resource-group $resourceGroup --query "properties.template.containers[0].image" -o tsv)  
-          echo "::set-output name=containerImage::$containerImage"
+          containerImage=$(az containerapp show --name orderweb --resource-group $resourceGroup --query "properties.template.containers[0].image" -o tsv)
+          IFS=';' read -ra imageArray <<< "$containerImage
+          echo ${imageArray[1]}  
+          echo "::set-output name=imageVersion::${imageArray[1]}"
     
     - name: Deploy Bicep Template
       uses: azure/arm-deploy@v1
@@ -97,7 +99,7 @@ jobs:
         resourceGroupName: ${{ env.resourceGroup}}
         template: ./deployment/containerapps/bicep/main.bicep
         deploymentMode: Incremental
-        parameters: version=${{ steps.getimages.outputs.containerImage }} location=$env:location environment=$env:containerAppEnvironment        
+        parameters: version=${{ steps.getimages.outputs.imageVersion }} location=$env:location environment=$env:containerAppEnvironment        
 
     - name: Get current revision name
       id: getcurrentrevisionname
