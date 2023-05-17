@@ -81,7 +81,7 @@ resource environment 'Microsoft.App/managedEnvironments@2022-03-01' = {
         }
         {
             name: 'database'
-            value: '_COSMOSDATABASE__'
+            value: '__COSMOSDATABASE__'
         }
         {
             name: 'collection'
