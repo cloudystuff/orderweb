@@ -56,10 +56,10 @@ jobs:
     environment: 
       name: orderweb-test
     env:
-      resourceGroup: orderwebtest
+      resourceGroup: orderweb-test
       location: westeurope
       logAnalyticsWorkspace: orderwebtest-logs
-      containerAppEnvironment: orderwebtest
+      containerAppEnvironment: orderweb-test
       cosmosUrl: "https://daprstate.documents.azure.com:443/"
       cosmosCollection: orders
     steps:
@@ -82,9 +82,9 @@ jobs:
         enable-AzPSSession: true 
             
     - name: Deploy bicep
-      run: ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}
+      run:  ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -environment $env:containerAppEnvironment -version $env:GITHUB_RUN_NUMBER           
       shell: pwsh
-      working-directory: ./deployment/containerapps/cli
+      working-directory: ./deployment/bicep
 
   deployprod:
     name: deploy prod
@@ -94,10 +94,10 @@ jobs:
     environment: 
       name: orderweb-prod
     env:
-      resourceGroup: orderwebprod
+      resourceGroup: orderweb-prod
       location: westeurope
       logAnalyticsWorkspace: orderwebprod-logs
-      containerAppEnvironment: orderwebprod
+      containerAppEnvironment: orderweb-prod
       cosmosUrl: https://daprstate.documents.azure.com:443/
       cosmosCollection: ordersProd
     steps:
@@ -119,11 +119,10 @@ jobs:
       with:
         path: deployment/containerapps/cli
 
-      
     - name: Deploy bicep
-      run: ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -logAnalyticsWorkspace $env:logAnalyticsWorkspace -environment $env:containerAppEnvironment -appVersion $env:GITHUB_RUN_NUMBER -acrRegistry jakob.azurecr.io -acrRegistryUsername jakob -acrRegistryPassword ${{ secrets.ACR_PASSWORD }}           
+      run:  ./deploy.ps1 -resourceGroup $env:resourceGroup -location $env:location -environment $env:containerAppEnvironment -version $env:GITHUB_RUN_NUMBER           
       shell: pwsh
-      working-directory: ./deployment/containerapps/cli
+      working-directory: ./deployment/bicep
 
 
 
