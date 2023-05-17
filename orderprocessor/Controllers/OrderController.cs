@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Dapr;
 using Dapr.Client;
+using System.Data.SqlClient;
 
 namespace orderprocessor.Controllers;
 
@@ -19,12 +20,9 @@ public class OrderCreatedController : ControllerBase
     [HttpPost("ordercreated")]
     public async Task Post([FromBody]Order order, [FromServices] DaprClient daprClient)
     {
-        //
-        //
-        //
         Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Processing order " + order.Id);
         await daprClient.SaveStateAsync<Order>("statestore", order.Id.ToString(), order);        
         await Task.Delay(2000);
         Console.WriteLine($"{DateTime.Now.ToLongTimeString()} Done with order " + order.Id);
-    }    
+    }       
 }
