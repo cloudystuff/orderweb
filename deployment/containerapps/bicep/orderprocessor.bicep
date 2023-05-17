@@ -40,7 +40,7 @@ resource orderprocessor 'Microsoft.App/containerApps@2022-03-01' = {
           image: 'jakob.azurecr.io/orderprocessor:${version}'
           name: 'orderprocessor'
           resources: {
-            cpu: '0.5'
+            cpu: json('0.5')
             memory: '1Gi'
           }
           env: [

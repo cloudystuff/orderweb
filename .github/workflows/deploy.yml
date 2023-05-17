@@ -118,7 +118,7 @@ jobs:
           az extension add -n containerapp --yes
           echo "Creating Blue Slot"
           az containerapp revision copy -n orderweb -g $resourceGroup -i jakob.azurecr.io/orderweb:${{ github.run_number }}
-          az containerapp ingress traffic set -n store-product-api -g $resourceGroup --revision-weight ${{ steps.getcurrentrevisionname.outputs.currentRevision }}=100
+          az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight ${{ steps.getcurrentrevisionname.outputs.currentRevision }}=100
       
     - name: 'Get Blue Slot URL'
       id: getbluesloturl
@@ -193,7 +193,7 @@ jobs:
           az extension add -n containerapp --yes
           echo "Creating Blue Slot"
           az containerapp revision copy -n orderweb -g $resourceGroup -i jakob.azurecr.io/orderweb:${{ github.run_number }}
-          az containerapp ingress traffic set -n store-product-api -g $resourceGroup --revision-weight ${{ steps.getcurrentrevisionname.outputs.currentRevision }}=100
+          az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight ${{ steps.getcurrentrevisionname.outputs.currentRevision }}=100
       
     - name: 'Get Blue Slot URL'
       id: getbluesloturl
