@@ -14,7 +14,7 @@ resource orderweb 'Microsoft.App/containerApps@2022-03-01' = {
     }
   }
   properties: {
-    managedEnvironmentId: resourceId('Microsoft.App/managedEnvironments', environment_name)
+    managedEnvironmentId: environment.id
     configuration: {
       activeRevisionsMode: 'Multiple'
       ingress: {
@@ -64,3 +64,6 @@ resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' 
   name: userAssignedIdentityName
 }
 
+resource environment 'Microsoft.App/managedEnvironments@2022-11-01-preview' existing = {
+  name: environment_name
+}

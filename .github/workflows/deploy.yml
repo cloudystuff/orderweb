@@ -84,16 +84,12 @@ jobs:
     - name: Get existing image version
       id: getimages
       run: |
-          echo "Installing containerapp extension"
-          echo $resourceGroup
           az extension add -n containerapp --yes
           containerImage=$(az containerapp show --name orderweb --resource-group $resourceGroup --query "properties.template.containers[0].image" -o tsv)
-          echo "$containerImage"
           IFS=':' read -ra imageArray <<< "$containerImage"
-          echo ${imageArray[1]}  
           echo "::set-output name=imageVersion::${imageArray[1]}"
     
-    - name: Deploy Bicep Template
+    - name: Deploy infrastructure
       uses: azure/arm-deploy@v1
       with:
         deploymentName: ${{ github.run_number }}
@@ -103,29 +99,27 @@ jobs:
         failOnStdErr: false
         parameters: version=${{ steps.getimages.outputs.imageVersion }} location=${{ env.location}} environment_name=${{ env.containerAppEnvironment}}        
 
-    - name: Get current revision name
-      id: getcurrentrevisionname
+    - name: Deploy api and background job
       run: |
         az extension add -n containerapp --yes
-        currentRevision=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].Revision' -o tsv)
-        echo "::set-output name=currentRevision::$currentRevision"
-
-    - name: 'Deploy to Blue Slot'
+        az containerapp update -g $resourceGroup -n orderweb jakob.azurecr.io/orderweb:${{ github.run_number }}
+        az containerapp update -g $resourceGroup -n orderprocessor jakob.azurecr.io/orderprocessor:${{ github.run_number }}        
+  
+    - name: 'Deploy to staging slot'
       uses: Azure/cli@v1
       with:
         inlineScript: |
-          echo "Installing containerapp extension"
           az extension add -n containerapp --yes
-          echo "Creating Blue Slot"
+          currentRevision=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].Revision' -o tsv)
           az containerapp revision copy -n orderweb -g $resourceGroup -i jakob.azurecr.io/orderweb:${{ github.run_number }}
           az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight ${{ steps.getcurrentrevisionname.outputs.currentRevision }}=100
       
-    - name: 'Get Blue Slot URL'
+    - name: 'Run smoke tests'
       id: getbluesloturl
       run: |
-        echo "Installing containerapp extension"
         az extension add -n containerapp --yes
         bluesloturl=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].FQDN' -o tsv)
+        echo $bluesloturl
         echo "::set-output name=bluesloturl::$bluesloturl"
   
   deployprod:
@@ -177,6 +171,7 @@ jobs:
         template: ./deployment/containerapps/bicep/main.bicep
         deploymentMode: Incremental
         parameters: version=${{ steps.getimages.outputs.containerImage }} location=$env:location environment=$env:containerAppEnvironment        
+
 
     - name: Get current revision name
       id: getcurrentrevisionname
