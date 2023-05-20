@@ -112,7 +112,7 @@ jobs:
           az extension add -n containerapp --yes
           currentRevision=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].Revision' -o tsv)
           az containerapp revision copy -n orderweb -g $resourceGroup -i jakob.azurecr.io/orderweb:${{ github.run_number }}
-          az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight ${{ steps.getcurrentrevisionname.outputs.currentRevision }}=100
+          az containerapp ingress traffic set -n orderweb -sg $resourceGroup --revision-weight $currentRevision=100
       
     - name: 'Run smoke tests'
       id: getbluesloturl
