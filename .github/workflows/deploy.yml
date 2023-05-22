@@ -7,47 +7,52 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  #$GITHUB_RUN_NUMBER
+  #${{ github.run_number }}
+  AppVersion: 148
+
 jobs:
 
-  build:
+  # build:
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v3
+  #   steps:
+  #   - uses: actions/checkout@v3
     
-    - name: Dependency Review
-      uses: actions/dependency-review-action@v3
-      if: github.event_name == 'pull_request'
+  #   - name: Dependency Review
+  #     uses: actions/dependency-review-action@v3
+  #     if: github.event_name == 'pull_request'
     
-    - name: Build orderweb
-      run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$GITHUB_RUN_NUMBER"
+  #   - name: Build orderweb
+  #     run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$AppVersion"
       
-    - name: Build orderapi
-      run: docker build . --file orderapi/Dockerfile --tag "jakob.azurecr.io/orderapi:$GITHUB_RUN_NUMBER"
+  #   - name: Build orderapi
+  #     run: docker build . --file orderapi/Dockerfile --tag "jakob.azurecr.io/orderapi:$AppVersion"
       
-    - name: Build orderprocessor
-      run: docker build . --file orderprocessor/Dockerfile --tag "jakob.azurecr.io/orderprocessor:$GITHUB_RUN_NUMBER"
+  #   - name: Build orderprocessor
+  #     run: docker build . --file orderprocessor/Dockerfile --tag "jakob.azurecr.io/orderprocessor:$AppVersion"
       
-    - name: Azure Container Registry Login
-      uses: Azure/docker-login@v1
-      with:
-        username: jakob
-        password: ${{ secrets.ACR_PASSWORD }}
-        login-server: jakob.azurecr.io
+  #   - name: Azure Container Registry Login
+  #     uses: Azure/docker-login@v1
+  #     with:
+  #       username: jakob
+  #       password: ${{ secrets.ACR_PASSWORD }}
+  #       login-server: jakob.azurecr.io
         
-    - name: Push orderweb
-      run: docker push "jakob.azurecr.io/orderweb:$GITHUB_RUN_NUMBER"
+  #   - name: Push orderweb
+  #     run: docker push "jakob.azurecr.io/orderweb:$AppVersion"
       
-    - name: Push orderapi
-      run: docker push "jakob.azurecr.io/orderapi:$GITHUB_RUN_NUMBER"
+  #   - name: Push orderapi
+  #     run: docker push "jakob.azurecr.io/orderapi:$AppVersion"
       
-    - name: Push orderprocessor
-      run: docker push "jakob.azurecr.io/orderprocessor:$GITHUB_RUN_NUMBER"      
+  #   - name: Push orderprocessor
+  #     run: docker push "jakob.azurecr.io/orderprocessor:$AppVersion"      
       
   deployStagingSlot:
     name: deploy to staging slot
-    needs: build
+    #needs: build
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'    
     environment: 
@@ -89,7 +94,7 @@ jobs:
     - name: Deploy infrastructure
       uses: azure/arm-deploy@v1
       with:
-        deploymentName: ${{ github.run_number }}
+        deploymentName: $AppVersion
         resourceGroupName: ${{ env.resourceGroup}}
         scope: resourcegroup
         template: ./deployment/containerapps/bicep/main.bicep
@@ -100,8 +105,8 @@ jobs:
     - name: Deploy api and background job
       run: |
         az extension add -n containerapp --yes
-        az containerapp update -g $resourceGroup -n orderweb -i jakob.azurecr.io/orderweb:${{ github.run_number }}
-        az containerapp update -g $resourceGroup -n orderprocessor -i jakob.azurecr.io/orderprocessor:${{ github.run_number }}        
+        az containerapp update -g $resourceGroup -n orderweb -i jakob.azurecr.io/orderweb:$AppVersion
+        az containerapp update -g $resourceGroup -n orderprocessor -i jakob.azurecr.io/orderprocessor:$AppVersion      
   
     - name: 'Deploy web to staging slot'
       uses: Azure/cli@v1
@@ -109,7 +114,8 @@ jobs:
         inlineScript: |
           az extension add -n containerapp --yes
           currentRevision=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].Revision' -o tsv)
-          az containerapp revision copy -n orderweb -g $resourceGroup -i jakob.azurecr.io/orderweb:${{ github.run_number }}
+          echo "current revision: $currentRevision"
+          az containerapp revision copy -n orderweb -g $resourceGroup -i jakob.azurecr.io/orderweb:$AppVersion
           az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight $currentRevision=100
       
     - name: 'Run smoke tests'
