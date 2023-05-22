@@ -83,16 +83,16 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true 
                 
-    - name: Deploy infrastructure
-      uses: azure/arm-deploy@v1
-      with:
-        deploymentName: ${{ env.AppVersion }}
-        resourceGroupName: ${{ env.resourceGroup}}
-        scope: resourcegroup
-        template: ./deployment/containerapps/bicep/main.bicep
-        deploymentMode: Incremental
-        failOnStdErr: false
-        parameters: version=${{ env.AppVersion }} location=${{ env.location }} environment_name=${{ env.containerAppEnvironment }}
+    # - name: Deploy infrastructure
+    #   uses: azure/arm-deploy@v1
+    #   with:
+    #     deploymentName: ${{ env.AppVersion }}
+    #     resourceGroupName: ${{ env.resourceGroup}}
+    #     scope: resourcegroup
+    #     template: ./deployment/containerapps/bicep/main.bicep
+    #     deploymentMode: Incremental
+    #     failOnStdErr: false
+    #     parameters: version=${{ env.AppVersion }} location=${{ env.location }} environment_name=${{ env.containerAppEnvironment }}
 
     - name: Deploy api and background job
       run: |
