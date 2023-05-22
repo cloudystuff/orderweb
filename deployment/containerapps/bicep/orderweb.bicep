@@ -20,6 +20,12 @@ resource orderweb 'Microsoft.App/containerApps@2022-03-01' = {
       ingress: {
         external: true
         targetPort: 5000
+        traffic: [
+          {
+            latestRevision: true
+            weight: 0            
+          }
+        ]
       }
       dapr: {
         enabled: true
