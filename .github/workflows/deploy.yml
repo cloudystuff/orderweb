@@ -113,9 +113,13 @@ jobs:
       with:
         inlineScript: |
           az extension add -n containerapp --yes
+          echo "revisions before copy"
+          az containerapp revision list -g $resourceGroup -n orderweb -o table
           currentRevision=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].Revision' -o tsv)
           echo "current revision: $currentRevision"
           az containerapp revision copy -n orderweb -g $resourceGroup -i jakob.azurecr.io/orderweb:$AppVersion
+          echo "revisions after copy"
+          az containerapp revision list -g $resourceGroup -n orderweb -o table          
           az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight $currentRevision=100
       
     - name: 'Run smoke tests'
