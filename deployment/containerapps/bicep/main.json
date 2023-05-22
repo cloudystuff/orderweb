@@ -1,0 +1,623 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.17.1.54307",
+      "templateHash": "12482975108822171015"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "environment_name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "userAssignedIdentityName": "containerAppIdentity"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "environmentDeployment",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "environment_name": {
+            "value": "[parameters('environment_name')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerRegistryName": {
+            "value": "jakob"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.17.1.54307",
+              "templateHash": "12292694091419645182"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "environment_name": {
+              "type": "string"
+            },
+            "containerRegistryName": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "logAnalyticsWorkspaceName": "[format('logs-{0}', parameters('environment_name'))]",
+            "appInsightsName": "[format('appins-{0}', parameters('environment_name'))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/managedEnvironments/daprComponents",
+              "apiVersion": "2022-03-01",
+              "name": "[format('{0}/{1}', parameters('environment_name'), 'orderpubsub')]",
+              "properties": {
+                "componentType": "pubsub.azure.servicebus",
+                "version": "v1",
+                "ignoreErrors": true,
+                "initTimeout": "5s",
+                "metadata": [
+                  {
+                    "name": "connectionString",
+                    "value": "__PUBSUBCONNECTIONSTRING__"
+                  }
+                ],
+                "scopes": [
+                  "orderapi",
+                  "orderprocessor"
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.App/managedEnvironments', parameters('environment_name'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.App/managedEnvironments/daprComponents",
+              "apiVersion": "2022-03-01",
+              "name": "[format('{0}/{1}', parameters('environment_name'), 'statestore')]",
+              "properties": {
+                "componentType": "state.azure.cosmosdb",
+                "version": "v1",
+                "ignoreErrors": true,
+                "initTimeout": "5s",
+                "metadata": [
+                  {
+                    "name": "url",
+                    "value": "__COSMOSURL__"
+                  },
+                  {
+                    "name": "masterKey",
+                    "value": "__COSMOSMASTERKEY__"
+                  },
+                  {
+                    "name": "database",
+                    "value": "__COSMOSDATABASE__"
+                  },
+                  {
+                    "name": "collection",
+                    "value": "__COSMOSCOLLECTION__"
+                  }
+                ],
+                "scopes": [
+                  "orderapi",
+                  "orderprocessor"
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.App/managedEnvironments', parameters('environment_name'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.OperationalInsights/workspaces",
+              "apiVersion": "2021-06-01",
+              "name": "[variables('logAnalyticsWorkspaceName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "retentionInDays": 30,
+                "features": {
+                  "searchVersion": 1
+                },
+                "sku": {
+                  "name": "PerGB2018"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Insights/components",
+              "apiVersion": "2020-02-02",
+              "name": "[variables('appInsightsName')]",
+              "location": "[parameters('location')]",
+              "kind": "web",
+              "properties": {
+                "Application_Type": "web",
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName'))]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.App/managedEnvironments",
+              "apiVersion": "2022-03-01",
+              "name": "[parameters('environment_name')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "daprAIInstrumentationKey": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), '2020-02-02').InstrumentationKey]",
+                "appLogsConfiguration": {
+                  "destination": "log-analytics",
+                  "logAnalyticsConfiguration": {
+                    "customerId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName')), '2021-06-01').customerId]",
+                    "sharedKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName')), '2021-06-01').primarySharedKey]"
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2021-09-30-preview",
+              "name": "containerAppIdentity",
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.LoadTestService/loadTests",
+              "apiVersion": "2022-12-01",
+              "name": "[format('loadtest-{0}', parameters('environment_name'))]",
+              "location": "[parameters('location')]",
+              "properties": {}
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "roleAssignmentsDeployment",
+              "resourceGroup": "acr",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "userAssignedIdentityId": {
+                    "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'containerAppIdentity')]"
+                  },
+                  "userAssignedIdentityPrincipalId": {
+                    "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'containerAppIdentity'), '2021-09-30-preview').principalId]"
+                  },
+                  "containerRegistryName": {
+                    "value": "[parameters('containerRegistryName')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.17.1.54307",
+                      "templateHash": "4185672658595506888"
+                    }
+                  },
+                  "parameters": {
+                    "containerRegistryName": {
+                      "type": "string"
+                    },
+                    "userAssignedIdentityId": {
+                      "type": "string"
+                    },
+                    "userAssignedIdentityPrincipalId": {
+                      "type": "string"
+                    }
+                  },
+                  "variables": {
+                    "acrPullRoleDefinitionId": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-10-01-preview",
+                      "scope": "[format('Microsoft.ContainerRegistry/registries/{0}', parameters('containerRegistryName'))]",
+                      "name": "[guid(parameters('userAssignedIdentityId'), resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName')), variables('acrPullRoleDefinitionId'))]",
+                      "properties": {
+                        "principalId": "[parameters('userAssignedIdentityPrincipalId')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('acrPullRoleDefinitionId'))]"
+                      }
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'containerAppIdentity')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "appUserAssignedIdentityId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'containerAppIdentity')]"
+            },
+            "environmentId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.App/managedEnvironments', parameters('environment_name'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "orderwebDeployent",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "environmentId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'environmentDeployment'), '2022-09-01').outputs.environmentId.value]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "version": {
+            "value": "[parameters('version')]"
+          },
+          "userAssignedIdentityName": {
+            "value": "[variables('userAssignedIdentityName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.17.1.54307",
+              "templateHash": "4272918015095267785"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "environmentId": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "userAssignedIdentityName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/containerApps",
+              "apiVersion": "2022-03-01",
+              "name": "orderweb",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName')))]": {}
+                }
+              },
+              "properties": {
+                "managedEnvironmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "activeRevisionsMode": "Multiple",
+                  "ingress": {
+                    "external": true,
+                    "targetPort": 5000
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appPort": 5000,
+                    "appId": "orderweb"
+                  },
+                  "registries": [
+                    {
+                      "server": "jakob.azurecr.io",
+                      "identity": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName'))]"
+                    }
+                  ]
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "image": "[format('jakob.azurecr.io/orderweb:{0}', parameters('version'))]",
+                      "name": "orderweb",
+                      "resources": {
+                        "cpu": "[json('0.5')]",
+                        "memory": "1Gi"
+                      },
+                      "env": [
+                        {
+                          "name": "DAPR_HTTP_PORT",
+                          "value": "3500"
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 1,
+                    "maxReplicas": 1
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'environmentDeployment')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "orderapiDeployent",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "environmentId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'environmentDeployment'), '2022-09-01').outputs.environmentId.value]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "version": {
+            "value": "[parameters('version')]"
+          },
+          "userAssignedIdentityName": {
+            "value": "[variables('userAssignedIdentityName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.17.1.54307",
+              "templateHash": "4442466351395048520"
+            }
+          },
+          "parameters": {
+            "environmentId": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "userAssignedIdentityName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/containerApps",
+              "apiVersion": "2022-03-01",
+              "name": "orderapi",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName')))]": {}
+                }
+              },
+              "properties": {
+                "managedEnvironmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "activeRevisionsMode": "single",
+                  "ingress": {
+                    "external": true,
+                    "targetPort": 5000
+                  },
+                  "registries": [
+                    {
+                      "server": "jakob.azurecr.io",
+                      "identity": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName'))]"
+                    }
+                  ],
+                  "dapr": {
+                    "enabled": true,
+                    "appPort": 5000,
+                    "appId": "orderapi"
+                  }
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "image": "[format('jakob.azurecr.io/orderapi:{0}', parameters('version'))]",
+                      "name": "orderapi",
+                      "resources": {
+                        "cpu": "[json('0.5')]",
+                        "memory": "1Gi"
+                      },
+                      "env": [
+                        {
+                          "name": "DAPR_HTTP_PORT",
+                          "value": "3500"
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 1,
+                    "maxReplicas": 1
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'environmentDeployment')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "orderprocessorDeployent",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "environmentId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'environmentDeployment'), '2022-09-01').outputs.environmentId.value]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "version": {
+            "value": "[parameters('version')]"
+          },
+          "userAssignedIdentityName": {
+            "value": "[variables('userAssignedIdentityName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.17.1.54307",
+              "templateHash": "2828351287113501289"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "environmentId": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "userAssignedIdentityName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/containerApps",
+              "apiVersion": "2022-03-01",
+              "name": "orderprocessor",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName')))]": {}
+                }
+              },
+              "properties": {
+                "managedEnvironmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "activeRevisionsMode": "single",
+                  "secrets": [
+                    {
+                      "name": "servicebus-connectionstring",
+                      "value": "__PUBSUBCONNECTIONSTRING__"
+                    }
+                  ],
+                  "registries": [
+                    {
+                      "server": "jakob.azurecr.io",
+                      "identity": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName'))]"
+                    }
+                  ],
+                  "dapr": {
+                    "enabled": true,
+                    "appPort": 5000,
+                    "appId": "orderprocessor"
+                  }
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "image": "[format('jakob.azurecr.io/orderprocessor:{0}', parameters('version'))]",
+                      "name": "orderprocessor",
+                      "resources": {
+                        "cpu": "[json('0.5')]",
+                        "memory": "1Gi"
+                      },
+                      "env": [
+                        {
+                          "name": "DAPR_HTTP_PORT",
+                          "value": "3500"
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0,
+                    "maxReplicas": 10,
+                    "rules": [
+                      {
+                        "name": "queue-based-autoscaling",
+                        "custom": {
+                          "type": "azure-servicebus",
+                          "metadata": {
+                            "topicName": "ordercreated",
+                            "subscriptionName": "orderprocessor",
+                            "queueLength": "1"
+                          },
+                          "auth": [
+                            {
+                              "secretRef": "servicebus-connectionstring",
+                              "triggerParameter": "connection"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'environmentDeployment')]"
+      ]
+    }
+  ]
+}

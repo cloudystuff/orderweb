@@ -1,4 +1,4 @@
-param location string = 'westeurope'
+param location string
 param environment_name string
 param containerRegistryName string
 
@@ -120,3 +120,4 @@ resource loadTest 'Microsoft.LoadTestService/loadTests@2022-12-01' = {
 }
 
 output appUserAssignedIdentityId string = identity.id
+output environmentId string = environment.id

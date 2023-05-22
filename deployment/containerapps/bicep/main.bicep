@@ -16,7 +16,7 @@ module environmentModule 'environment.bicep' = {
 module orderwebModule 'orderweb.bicep' = {
   name: 'orderwebDeployent'
   params: {
-    environment_name: environment_name
+    environmentId: environmentModule.outputs.environmentId
     location: location
     version: version
     userAssignedIdentityName: userAssignedIdentityName
@@ -29,7 +29,7 @@ module orderwebModule 'orderweb.bicep' = {
 module orderapiModule 'orderapi.bicep' = {
   name: 'orderapiDeployent'
   params: {
-    environment_name: environment_name
+    environmentId: environmentModule.outputs.environmentId
     location: location
     version: version
     userAssignedIdentityName: userAssignedIdentityName    
@@ -42,7 +42,7 @@ module orderapiModule 'orderapi.bicep' = {
 module orderprocessorModule 'orderprocessor.bicep' = {
   name: 'orderprocessorDeployent'
   params: {
-    environment_name: environment_name
+    environmentId: environmentModule.outputs.environmentId
     location: location
     version: version
     userAssignedIdentityName: userAssignedIdentityName    

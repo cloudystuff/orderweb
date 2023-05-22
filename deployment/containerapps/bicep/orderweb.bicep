@@ -1,5 +1,5 @@
 param location string
-param environment_name string
+param environmentId string
 param version string
 param userAssignedIdentityName string
 
@@ -13,7 +13,7 @@ resource orderweb 'Microsoft.App/containerApps@2022-03-01' = {
     }
   }
   properties: {
-    managedEnvironmentId: environment.id
+    managedEnvironmentId: environmentId
     configuration: {
       activeRevisionsMode: 'Multiple'
       ingress: {
@@ -61,8 +61,4 @@ resource orderweb 'Microsoft.App/containerApps@2022-03-01' = {
 
 resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing =  {
   name: userAssignedIdentityName
-}
-
-resource environment 'Microsoft.App/managedEnvironments@2022-11-01-preview' existing = {
-  name: environment_name
 }

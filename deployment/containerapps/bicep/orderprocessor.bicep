@@ -1,5 +1,5 @@
 param location string
-param environment_name string
+param environmentId string
 param version string
 param userAssignedIdentityName string
 
@@ -13,7 +13,7 @@ resource orderprocessor 'Microsoft.App/containerApps@2022-03-01' = {
     }
   }  
   properties: {
-    managedEnvironmentId: resourceId('Microsoft.App/managedEnvironments', environment_name)
+    managedEnvironmentId: environmentId
     configuration: {
       activeRevisionsMode: 'single'
       secrets: [

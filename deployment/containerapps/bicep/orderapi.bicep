@@ -1,8 +1,7 @@
-param environment_name string
+param environmentId string
 param location string
 param version string
 param userAssignedIdentityName string
-
 
 resource orderapi 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'orderapi'
@@ -14,7 +13,7 @@ resource orderapi 'Microsoft.App/containerApps@2022-03-01' = {
     }
   }  
   properties: {
-    managedEnvironmentId: resourceId('Microsoft.App/managedEnvironments', environment_name)
+    managedEnvironmentId: environmentId
     configuration: {
       activeRevisionsMode: 'single'
       ingress: {
