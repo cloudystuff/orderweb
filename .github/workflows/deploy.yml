@@ -94,7 +94,7 @@ jobs:
     - name: Deploy infrastructure
       uses: azure/arm-deploy@v1
       with:
-        deploymentName: $AppVersion
+        deploymentName: ${{ env.AppVersion }}
         resourceGroupName: ${{ env.resourceGroup}}
         scope: resourcegroup
         template: ./deployment/containerapps/bicep/main.bicep
