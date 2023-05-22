@@ -108,7 +108,7 @@ jobs:
         template: ./deployment/containerapps/bicep/main.bicep
         deploymentMode: Incremental
         failOnStdErr: false
-        parameters: version=${{ steps.getimages.outputs.imageVersion }} location=${{ env.location}} environment_name=${{ env.containerAppEnvironment}} previousRevisionNae=${{ steps.getimages.outputs.currentRevision }}
+        parameters: version=${{ steps.getimages.outputs.imageVersion }} location=${{ env.location}} environment_name=${{ env.containerAppEnvironment}} previousRevisionName=${{ steps.getimages.outputs.currentRevision }}
 
     - name: Deploy api and background job
       run: |
