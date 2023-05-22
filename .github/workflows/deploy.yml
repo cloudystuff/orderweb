@@ -97,7 +97,7 @@ jobs:
     - name: Deploy api and background job
       run: |
         az extension add -n containerapp --yes
-        az containerapp update -g $resourceGroup -n orderweb -i jakob.azurecr.io/orderweb:$AppVersion
+        az containerapp update -g $resourceGroup -n orderapi -i jakob.azurecr.io/orderapi:$AppVersion
         az containerapp update -g $resourceGroup -n orderprocessor -i jakob.azurecr.io/orderprocessor:$AppVersion      
   
     - name: 'Deploy web to staging slot'
