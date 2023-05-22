@@ -113,6 +113,8 @@ jobs:
           echo "revisions after copy"
           az containerapp revision list -g $resourceGroup -n orderweb -o table          
           az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight $currentRevision=100
+          echo "revisions after copy2"
+          az containerapp revision list -g $resourceGroup -n orderweb -o table          
       
     - name: 'Run smoke tests'
       id: getbluesloturl
