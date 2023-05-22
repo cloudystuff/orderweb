@@ -1,7 +1,6 @@
 param location string
 param environment_name string
 param version string
-param previousRevisionName string
 
 var userAssignedIdentityName = 'containerAppIdentity'
 
@@ -21,7 +20,6 @@ module orderwebModule 'orderweb.bicep' = {
     location: location
     version: version
     userAssignedIdentityName: userAssignedIdentityName
-    previousRevisionName: previousRevisionName
   }
   dependsOn: [
     environmentModule
