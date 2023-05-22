@@ -2,6 +2,12 @@ name: orderweb
 
 on:
   workflow_dispatch:     
+    inputs:
+      deployInfrastructure:
+        description: 'Deploy infrastructure'
+        type: boolean
+        required: true
+        default: false
   push:
     branches: [ "master" ]
   pull_request:
@@ -83,16 +89,17 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true 
                 
-    # - name: Deploy infrastructure
-    #   uses: azure/arm-deploy@v1
-    #   with:
-    #     deploymentName: ${{ env.AppVersion }}
-    #     resourceGroupName: ${{ env.resourceGroup}}
-    #     scope: resourcegroup
-    #     template: ./deployment/containerapps/bicep/main.bicep
-    #     deploymentMode: Incremental
-    #     failOnStdErr: false
-    #     parameters: version=${{ env.AppVersion }} location=${{ env.location }} environment_name=${{ env.containerAppEnvironment }}
+    - name: Deploy infrastructure
+      uses: azure/arm-deploy@v1
+      if: ${{ inputs.deployInfrastructure }} 
+      with:
+        deploymentName: ${{ env.AppVersion }}
+        resourceGroupName: ${{ env.resourceGroup}}
+        scope: resourcegroup
+        template: ./deployment/containerapps/bicep/main.bicep
+        deploymentMode: Incremental
+        failOnStdErr: false
+        parameters: version=${{ env.AppVersion }} location=${{ env.location }} environment_name=${{ env.containerAppEnvironment }}
 
     - name: Deploy api and background job
       run: |
@@ -105,23 +112,16 @@ jobs:
       with:
         inlineScript: |
           az extension add -n containerapp --yes
-          echo "revisions before copy"
-          az containerapp revision list -g $resourceGroup -n orderweb -o table
           currentRevision=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].Revision' -o tsv)
-          echo "current revision: $currentRevision"
           az containerapp revision copy -n orderweb -g $resourceGroup -i jakob.azurecr.io/orderweb:$AppVersion
-          echo "revisions after copy"
-          az containerapp revision list -g $resourceGroup -n orderweb -o table          
           az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight $currentRevision=100
-          echo "revisions after copy2"
-          az containerapp revision list -g $resourceGroup -n orderweb -o table          
       
     - name: 'Run smoke tests'
       id: getbluesloturl
       run: |
         az extension add -n containerapp --yes
         bluesloturl=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].FQDN' -o tsv)
-        echo $bluesloturl
+        echo "https://$bluesloturl"
         echo "::set-output name=bluesloturl::$bluesloturl"
 
   approve:
