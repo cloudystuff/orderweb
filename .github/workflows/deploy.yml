@@ -10,49 +10,49 @@ on:
 env:
   #$GITHUB_RUN_NUMBER
   #${{ github.run_number }}
-  AppVersion: 156
+  AppVersion: ${{ github.run_number }}
 
 jobs:
 
-  # build:
+  build:
 
-  #   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #   - uses: actions/checkout@v3
+    steps:
+    - uses: actions/checkout@v3
     
-  #   - name: Dependency Review
-  #     uses: actions/dependency-review-action@v3
-  #     if: github.event_name == 'pull_request'
+    - name: Dependency Review
+      uses: actions/dependency-review-action@v3
+      if: github.event_name == 'pull_request'
     
-  #   - name: Build orderweb
-  #     run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$AppVersion"
+    - name: Build orderweb
+      run: docker build . --file orderweb/Dockerfile --tag "jakob.azurecr.io/orderweb:$AppVersion"
       
-  #   - name: Build orderapi
-  #     run: docker build . --file orderapi/Dockerfile --tag "jakob.azurecr.io/orderapi:$AppVersion"
+    - name: Build orderapi
+      run: docker build . --file orderapi/Dockerfile --tag "jakob.azurecr.io/orderapi:$AppVersion"
       
-  #   - name: Build orderprocessor
-  #     run: docker build . --file orderprocessor/Dockerfile --tag "jakob.azurecr.io/orderprocessor:$AppVersion"
+    - name: Build orderprocessor
+      run: docker build . --file orderprocessor/Dockerfile --tag "jakob.azurecr.io/orderprocessor:$AppVersion"
       
-  #   - name: Azure Container Registry Login
-  #     uses: Azure/docker-login@v1
-  #     with:
-  #       username: jakob
-  #       password: ${{ secrets.ACR_PASSWORD }}
-  #       login-server: jakob.azurecr.io
+    - name: Azure Container Registry Login
+      uses: Azure/docker-login@v1
+      with:
+        username: jakob
+        password: ${{ secrets.ACR_PASSWORD }}
+        login-server: jakob.azurecr.io
         
-  #   - name: Push orderweb
-  #     run: docker push "jakob.azurecr.io/orderweb:$AppVersion"
+    - name: Push orderweb
+      run: docker push "jakob.azurecr.io/orderweb:$AppVersion"
       
-  #   - name: Push orderapi
-  #     run: docker push "jakob.azurecr.io/orderapi:$AppVersion"
+    - name: Push orderapi
+      run: docker push "jakob.azurecr.io/orderapi:$AppVersion"
       
-  #   - name: Push orderprocessor
-  #     run: docker push "jakob.azurecr.io/orderprocessor:$AppVersion"      
+    - name: Push orderprocessor
+      run: docker push "jakob.azurecr.io/orderprocessor:$AppVersion"      
       
   deployStagingSlot:
     name: deploy to staging slot
-    #needs: build
+    needs: build
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'    
     environment: 
@@ -124,6 +124,7 @@ jobs:
 
   approve:
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'  
     needs: deployStagingSlot
     environment:             
         name: approve
