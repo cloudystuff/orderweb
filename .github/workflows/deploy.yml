@@ -94,6 +94,10 @@ jobs:
           echo "revisions before bicep"
           az containerapp revision list -g $resourceGroup -n orderweb -o table
 
+          currentRevision=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].Revision' -o tsv)
+          echo "current revision: $currentRevision"
+          echo "::set-output name=currentRevision::$currentRevision"
+
     
     - name: Deploy infrastructure
       uses: azure/arm-deploy@v1
@@ -104,7 +108,7 @@ jobs:
         template: ./deployment/containerapps/bicep/main.bicep
         deploymentMode: Incremental
         failOnStdErr: false
-        parameters: version=${{ steps.getimages.outputs.imageVersion }} location=${{ env.location}} environment_name=${{ env.containerAppEnvironment}}        
+        parameters: version=${{ steps.getimages.outputs.imageVersion }} location=${{ env.location}} environment_name=${{ env.containerAppEnvironment}} previousRevisionNae=${{ steps.getimages.outputs.currentRevision }}
 
     - name: Deploy api and background job
       run: |

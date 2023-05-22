@@ -2,7 +2,7 @@ param location string
 param environment_name string
 param version string
 param userAssignedIdentityName string
-
+param previousRevisionName string
 
 resource orderweb 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'orderweb'
@@ -21,10 +21,15 @@ resource orderweb 'Microsoft.App/containerApps@2022-03-01' = {
         external: true
         targetPort: 5000
         traffic: [
-          {
-            latestRevision: true
-            weight: 0            
-          }
+          {           
+            revisionName: previousRevisionName
+            weight: 100
+        }
+        {
+            revisionName: 'orderweb--staging'
+            label: 'staging'
+            weight: 0
+        }
         ]
       }
       dapr: {
