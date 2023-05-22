@@ -19,7 +19,7 @@ resource orderprocessor 'Microsoft.App/containerApps@2022-03-01' = {
       secrets: [
         {
           name: 'servicebus-connectionstring'
-          value: 'Endpoint=sb://daprbus-demo.servicebus.windows.net/;SharedAccessKeyName=containerapp;SharedAccessKey=CCeO4OARmtsFVxTiZk9YFKyUMGk1r7lQkwwxXuXGUUg=;EntityPath=orders'
+          value: '__PUBSUBCONNECTIONSTRING__'
         }        
       ]
       registries: [
