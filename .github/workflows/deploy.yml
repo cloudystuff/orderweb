@@ -83,28 +83,28 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true 
             
-    - name: Get existing image version
-      id: getimages
-      run: |
-          az extension add -n containerapp --yes
-          containerImage=$(az containerapp show --name orderweb --resource-group $resourceGroup --query "properties.template.containers[0].image" -o tsv)
-          IFS=':' read -ra imageArray <<< "$containerImage"
-          echo "::set-output name=imageVersion::${imageArray[1]}"
+    # - name: Get existing image version
+    #   id: getimages
+    #   run: |
+    #       az extension add -n containerapp --yes
+    #       containerImage=$(az containerapp show --name orderweb --resource-group $resourceGroup --query "properties.template.containers[0].image" -o tsv)
+    #       IFS=':' read -ra imageArray <<< "$containerImage"
+    #       echo "::set-output name=imageVersion::${imageArray[1]}"
 
-          echo "revisions before bicep"
-          az containerapp revision list -g $resourceGroup -n orderweb -o table
+    #       echo "revisions before bicep"
+    #       az containerapp revision list -g $resourceGroup -n orderweb -o table
 
     
-    - name: Deploy infrastructure
-      uses: azure/arm-deploy@v1
-      with:
-        deploymentName: ${{ env.AppVersion }}
-        resourceGroupName: ${{ env.resourceGroup}}
-        scope: resourcegroup
-        template: ./deployment/containerapps/bicep/main.bicep
-        deploymentMode: Incremental
-        failOnStdErr: false
-        parameters: version=${{ steps.getimages.outputs.imageVersion }} location=${{ env.location}} environment_name=${{ env.containerAppEnvironment}}        
+    # - name: Deploy infrastructure
+    #   uses: azure/arm-deploy@v1
+    #   with:
+    #     deploymentName: ${{ env.AppVersion }}
+    #     resourceGroupName: ${{ env.resourceGroup}}
+    #     scope: resourcegroup
+    #     template: ./deployment/containerapps/bicep/main.bicep
+    #     deploymentMode: Incremental
+    #     failOnStdErr: false
+    #     parameters: version=${{ steps.getimages.outputs.imageVersion }} location=${{ env.location}} environment_name=${{ env.containerAppEnvironment}}        
 
     - name: Deploy api and background job
       run: |
