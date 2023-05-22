@@ -90,6 +90,10 @@ jobs:
           containerImage=$(az containerapp show --name orderweb --resource-group $resourceGroup --query "properties.template.containers[0].image" -o tsv)
           IFS=':' read -ra imageArray <<< "$containerImage"
           echo "::set-output name=imageVersion::${imageArray[1]}"
+
+          echo "revisions before bicep"
+          az containerapp revision list -g $resourceGroup -n orderweb -o table
+
     
     - name: Deploy infrastructure
       uses: azure/arm-deploy@v1
