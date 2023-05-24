@@ -122,7 +122,7 @@ jobs:
         az extension add -n containerapp --yes
         bluesloturl=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].FQDN' -o tsv)
         echo "https://$bluesloturl"
-        echo "::set-output name=bluesloturl::$bluesloturl"
+        curl "https://$bluesloturl"
 
   approve:
     runs-on: ubuntu-latest
@@ -162,83 +162,3 @@ jobs:
           blueSlot=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].Revision' -o tsv)
           echo $blueSlot
           az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight $blueSlot=100
-
-  # deployprod:
-  #   name: deploy prod
-  #   needs: deploytest
-  #   runs-on: ubuntu-latest
-  #   if: github.event_name != 'pull_request'    
-  #   environment: 
-  #     name: orderweb-prod
-  #   env:
-  #     resourceGroup: orderweb-prod
-  #     location: westeurope
-  #     logAnalyticsWorkspace: orderwebprod-logs
-  #     containerAppEnvironment: orderweb-prod
-  #     cosmosUrl: https://daprstate.documents.azure.com:443/
-  #     cosmosCollection: ordersProd
-  #   steps:
-  #   - uses: actions/checkout@v3
-
-  #   - name: Azure login
-  #     uses: azure/login@v1
-  #     with:
-  #       creds: ${{ secrets.AZURE_CREDENTIALS }}
-  #       enable-AzPSSession: true
-
-  #   - uses: sandersaares-actions/expand-tokens@master
-  #     env:
-  #       COSMOSURL: "https://daprstate.documents.azure.com:443/"
-  #       COSMOSMASTERKEY: ${{ secrets.COSMOS_MASTERKEY }}
-  #       COSMOSCOLLECTION: ordersprod
-  #       COSMOSDATABASE: daprdemo
-  #       PUBSUBCONNECTIONSTRING: "${{ secrets.PUBSUB_CONNECTIONSTRING }}"
-  #     with:
-  #       path: deployment/containerapps/bicep
-
-  #   - name: Get existing image version
-  #     id: getimages
-  #     run: |
-  #         echo "Installing containerapp extension"
-  #         az extension add -n containerapp --yes
-  #         containerImage=$(az containerapp show --name orderweb --resource-group $resourceGroup --query "properties.template.containers[0].image" -o tsv)  
-  #         echo "::set-output name=containerImage::$containerImage"
-  
-  #   - name: Deploy Bicep Template
-  #     uses: azure/arm-deploy@v1
-  #     with:
-  #       deploymentName: ${{ github.run_number }}
-  #       resourceGroupName: ${{ env.resourceGroup}}
-  #       template: ./deployment/containerapps/bicep/main.bicep
-  #       deploymentMode: Incremental
-  #       parameters: version=${{ steps.getimages.outputs.containerImage }} location=$env:location environment=$env:containerAppEnvironment        
-
-
-  #   - name: Get current revision name
-  #     id: getcurrentrevisionname
-  #     run: |
-  #       az extension add -n containerapp --yes
-  #       currentRevision=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].Revision' -o tsv)
-  #       echo "::set-output name=currentRevision::$currentRevision"
-
-  #   - name: 'Deploy to Blue Slot'
-  #     uses: Azure/cli@v1
-  #     with:
-  #       inlineScript: |
-  #         echo "Installing containerapp extension"
-  #         az extension add -n containerapp --yes
-  #         echo "Creating Blue Slot"
-  #         az containerapp revision copy -n orderweb -g $resourceGroup -i jakob.azurecr.io/orderweb:${{ github.run_number }}
-  #         az containerapp ingress traffic set -n orderweb -g $resourceGroup --revision-weight ${{ steps.getcurrentrevisionname.outputs.currentRevision }}=100
-      
-  #   - name: 'Get Blue Slot URL'
-  #     id: getbluesloturl
-  #     run: |
-  #       echo "Installing containerapp extension"
-  #       az extension add -n containerapp --yes
-  #       bluesloturl=$(az containerapp revision list -g $resourceGroup -n orderweb --query 'reverse(sort_by([].{Revision:name,Replicas:properties.replicas,Active:properties.active,Created:properties.createdTime,FQDN:properties.fqdn}[?Active!=`false`], &Created))| [0].FQDN' -o tsv)
-  #       echo "::set-output name=bluesloturl::$bluesloturl"
-
-
-
-
