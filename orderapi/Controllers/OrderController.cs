@@ -29,6 +29,7 @@ public class OrderController : ControllerBase
                     "}";
 
         var client = new Dapr.Client.DaprClientBuilder().Build();
+ 
         var orders = await client.QueryStateAsync<Order>("statestore", query);
 
         var result = new List<Order>();
